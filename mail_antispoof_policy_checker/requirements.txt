@@ -1,7 +1,7 @@
 # Python >= 3.9 required for --async-mode (asyncio.to_thread)
 # All async functionality uses the stdlib asyncio module — no extra packages needed.
 
-checkdmarc>=5.12.0
+checkdmarc>=5.12.0,<6
 dnspython>=2.0.0
 cryptography>=3.0
 pytz>=2021.1
