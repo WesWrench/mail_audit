@@ -19,6 +19,14 @@ mail_audit ──imports──► smtp_checker
 
 ---
 
+## Disclaimer
+
+This tool is a **proof of concept** provided for **educational purposes only**. Do not use it for offensive operations. Use it only in a controlled lab environment where you own the systems or have explicit permission to test them.
+
+The software is provided **as is**, without warranty or technical support. You are responsible for how you use it and for complying with applicable laws.
+
+---
+
 ## How the packages find each other
 
 `mail_audit` uses **absolute package imports**, not relative `../` paths:
