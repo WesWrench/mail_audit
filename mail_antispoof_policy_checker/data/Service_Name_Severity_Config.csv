@@ -1,0 +1,3 @@
+service_name;severity
+SendGrid;critical
+Outlook.com Service;critical

@@ -1,0 +1,11 @@
+{
+  "service": "SendGrid",
+  "technique": "delivery_service_web_ui_domain_verification",
+  "date": "2026-08-06",
+  "result": "fail",
+  "effect": "soften",
+  "likelihood": "low",
+  "vector": { "service_type": "web_ui" },
+  "note": "SendGrid requires domain authentication (proof of control via DNS records, ACME/Let's Encrypt-style) before a domain can be used as From. Spoofing an arbitrary From is only feasible if the attacker also controls the target's DNS zone.",
+  "source": "SendGrid - Sender/Domain Authentication"
+}

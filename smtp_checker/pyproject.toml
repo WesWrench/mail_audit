@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smtp-checker"
+version = "2.11.0"
+description = "SMTP server and domain security testing tool: STARTTLS, DANE, MTA-STS, DNSSEC, Open Relay"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["email", "smtp", "security", "dane", "mta-sts", "dnssec", "starttls", "open-relay"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Topic :: Communications :: Email",
+    "Topic :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "dnspython>=2.0.0",
+    "checkdmarc>=5.0.0",
+    "certifi>=2024.0.0",
+    "cryptography>=41.0.0",
+    "pandas>=1.3.0",
+    "openpyxl>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[tool.setuptools.package-data]
+"smtp_checker" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["smtp_checker", "smtp_checker.*"]

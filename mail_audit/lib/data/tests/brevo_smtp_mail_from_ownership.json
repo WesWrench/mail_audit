@@ -1,0 +1,14 @@
+{
+  "service": "Brevo",
+  "technique": "delivery_service_smtp_mail_from_ownership",
+  "date": "2026-08-06",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": {
+    "vector_type": "smtp_server",
+    "port": "587/465",
+    "transport": "client_to_server"
+  },
+  "note": "The SMTP relay only accepts senders/domains already authenticated on the account - an arbitrary MAIL FROM is impossible. Blocked (the local-script vector (trusted_local_submission) is not applicable - Brevo is a mail service, not a host).",
+  "source": "https://help.brevo.com/hc/fr/articles/17286219877778"
+}

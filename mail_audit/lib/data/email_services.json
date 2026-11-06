@@ -1,0 +1,215 @@
+{
+  "services": {
+    "SendGrid": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["sendgrid.net", "em.sendgrid.net", "u.sendgrid.net"],
+      "attack_vectors": [
+        {"vector_type": "web_ui", "auth_mode": "credentials", "status": "confirmed",
+         "dkim": "sendgrid.net:s=smtpapi",
+         "notes": "WORKS without domain authentication via the UI: Email API > Dynamic Templates > create/open a template > Preview > Edit > Settings > 'Test your email'. The form exposes a free 'From Address' (any value) + recipients + 'Send Test Message' (subject is prefixed 'Test - '). You control only the header From: the envelope MAIL FROM stays bounces@sendgrid.net, so SPF/DKIM are NOT aligned and DMARC is NOT bypassed (an enforced p=quarantine/reject catches it - observed: DMARC_POLICY_QUARANTINE, SPF/DKIM not aligned). Even with p=none DMARC is still evaluated: the alignment failure is scored (Rspamd DMARC_POLICY_SOFTFAIL +1.5 at p=none, DMARC_POLICY_QUARANTINE +3 at p=quarantine) and FORGED_SENDER is always raised (From domain != bounces@sendgrid.net). The payoff is REPUTATION only: the mail leaves SendGrid IPs (listed in the victim's SPF, so the From-domain SPF matches the sending IP), but the verdict then depends on the outbound IP reputation (RBL_MAILSPIKE_* seen on some SendGrid IPs) - tested 2026-10-30, Rspamd / Gmail: p=none 1.70/11, spam; p=quarantine 7.30/11, spam + authentication warning; p=reject 9.80/11, not received. Best case: a target that whitelists SendGrid IPs (e.g. because it uses SendGrid itself). Domain Authentication (Settings > Sender Authentication: 3 CNAMEs with Automated Security, or 2 TXT + 1 MX) proves DNS control, not registrar ownership; Single Sender Verification only validates one From address via an email link."},
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "blocked", "port": "587/465", "transport": "client_to_server"},
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "blocked", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Mailjet": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["spf.mailjet.com", "mailjet.com"],
+      "attack_vectors": [
+        {"vector_type": "web_ui",     "auth_mode": "credentials", "status": "unverified"},
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Brevo": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["spf.brevo.com", "spf.sendinblue.com", "sendinblue.com"],
+      "attack_vectors": [
+        {"vector_type": "web_ui",     "auth_mode": "credentials", "status": "unverified"},
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Mandrill": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["spf.mandrillapp.com", "mandrillapp.com"],
+      "attack_vectors": [
+        {"vector_type": "web_ui",     "auth_mode": "credentials", "status": "unverified"},
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Tipimail": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["spf.tipimail.com", "tipimail.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"},
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Mailpro": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["spf.mailpro.com", "mailpro.com"],
+      "attack_vectors": [
+        {"vector_type": "web_ui",     "auth_mode": "credentials", "status": "unverified"},
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Amazon SES": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["amazonses.com", "email-smtp.us-east-1.amazonaws.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"},
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Mailchimp": {
+      "service_type": "Email Delivery Service",
+      "spf_includes": ["spf.mandrillapp.com", "servers.mcsv.net"],
+      "attack_vectors": [
+        {"vector_type": "web_ui",     "auth_mode": "credentials", "status": "unverified"},
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "OVH": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["mx.ovh.com", "mx.ovh.net", "ovh.net", "ovh.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server", "auth_mode": "credentials", "status": "confirmed", "shared": true, "port": "587/465", "transport": "client_to_server"},
+        {"vector_type": "local_script","auth_mode": "trusted_local_submission",   "status": "confirmed", "transport": "local_submission"}
+      ]
+    },
+    "Gandi": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["mail.gandi.net", "gandi.net"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Infomaniak": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["mta.infomaniak.com", "infomaniak.com", "infomaniak.ch"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"},
+        {"vector_type": "smtp_server","auth_mode": "api_key",     "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "AlwaysData": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["alwaysdata.net", "alwaysdata.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server", "auth_mode": "credentials", "status": "unverified", "shared": true, "port": "587/465", "transport": "client_to_server",
+         "dkim": "alwaysdata.net:s=default",
+         "notes": "Shared Mail Server: create an AlwaysData mailbox and authenticate on smtp-<username>.alwaysdata.net (SMTP AUTH, e.g. a Python smtplib or PHPMailer script), then send a message with a forged From on the hosted domain. MAIL FROM aligns with the hosted domain (in SPF), so DMARC passes on the SPF branch even under p=reject. Signed d=alwaysdata.net s=default (valid, not aligned)."},
+        {"vector_type": "local_script","auth_mode": "trusted_local_submission",   "status": "unverified",
+         "dkim": "alwaysdata.net:s=default",
+         "notes": "Local MTA of the shared host (e.g. a PHP mail()/PHPMailer script, `mail -f` / Sender field): submits through the host with NO SMTP authentication (auth bypass). MAIL FROM is aligned with the hosted domain (in SPF), so DMARC is bypassed even under p=reject. The message is DKIM-signed by alwaysdata.net (s=default), NOT aligned with the forged From, but DMARC still passes via SPF alignment (the SPF-OR-DKIM rule), and the valid signature avoids an R_DKIM_NA penalty.", "transport": "local_submission"}
+      ]
+    },
+    "NameBright": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["namebright.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "BeYs Cloud": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["beys.cloud"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Aruba Business": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["aruba.it", "aruba.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "OS2Switch": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["os2switch.net", "os2switch.fr"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "VTX.ch": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["vtx.ch"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Viaduc": {
+      "service_type": "Shared Hosting",
+      "spf_includes": ["viaduc.com", "viaduc.fr"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Outlook.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["spf.protection.outlook.com", "outlook.com", "hotmail.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server",      "auth_mode": "credentials", "status": "confirmed",
+         "notes": "Script SMTP via smtp-mail.outlook.com:587 avec un compte Outlook.com (From: spoofed)", "port": "587/465", "transport": "client_to_server"},
+        {"vector_type": "email_forwarding", "auth_mode": "credentials", "status": "confirmed",
+         "notes": "Règle de forward depuis une boite Outlook.com/Hotmail vers la cible — le mail transite par les IPs Microsoft whitelistées dans SPF"}
+      ]
+    },
+    "Gmail.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["_spf.google.com", "gmail.com", "googlemail.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "app_password", "status": "confirmed",
+         "notes": "Envoi programmatique via smtp.gmail.com:587 avec App Password (2FA activé) et header From: spoofé", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "Yahoo.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["_spf.yahoo.com", "yahoo.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "app_password", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "ProtonMail.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["_spf.protonmail.ch", "protonmail.com", "protonmail.ch"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "iCloud.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["icloud.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "app_password", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "AOL.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["_spf.aol.com", "aol.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "app_password", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "GMX.net Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["_spf.gmx.net", "gmx.net", "gmx.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "mail.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["mail.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    },
+    "163.com Service": {
+      "service_type": "Free Mail Provider",
+      "spf_includes": ["163.com", "126.com"],
+      "attack_vectors": [
+        {"vector_type": "smtp_server","auth_mode": "credentials", "status": "unverified", "port": "587/465", "transport": "client_to_server"}
+      ]
+    }
+  }
+}

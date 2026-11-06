@@ -1,0 +1,14 @@
+{
+  "service": "SendGrid",
+  "technique": "delivery_service_smtp_mail_from_ownership",
+  "date": "2026-08-06",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": {
+    "vector_type": "smtp_server",
+    "port": "587/465",
+    "transport": "client_to_server"
+  },
+  "note": "The SMTP relay enforces MAIL FROM / sender ownership against the authenticated account: sending with an unverified MAIL FROM is rejected with 'You are not authorized to send from that email address'. You cannot set an arbitrary MAIL FROM. Blocked (the local-script vector (trusted_local_submission) is not applicable - SendGrid is a mail service, not a host).",
+  "source": "https://www.twilio.com/docs/sendgrid/for-developers/sending-email/smtp-errors-and-troubleshooting"
+}

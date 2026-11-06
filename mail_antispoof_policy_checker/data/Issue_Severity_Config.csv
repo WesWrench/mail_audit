@@ -1,0 +1,42 @@
+issue_code;issue_title;category;default_severity;configurable_severity;description
+domain_not_exist;Non-existent domain;SPF;high;high;Domain does not exist (NXDOMAIN)
+no_spf;No SPF;SPF;critical;critical;No SPF record found
+spf_no_all;No 'all' mechanism;SPF;high;high;SPF record missing 'all' mechanism
+spf_pass;'Pass' qualifier for 'all' mechanism;SPF;critical;critical;SPF allows all senders (+all)
+spf_neutral;'Neutral' qualifier for 'all' mechanism;SPF;high;high;SPF returns neutral for all senders (?all) — treated like no SPF assertion, more permissive than softfail
+spf_softfail;'SoftFail' qualifier for 'all' mechanism;SPF;medium;medium;SPF uses soft fail (~all)
+spf_too_many_lookups;Too many lookups for SPF validation;SPF;medium;medium;SPF exceeds 10 DNS lookups
+spf_unregistered_domains_chain;Unregistered domains in SPF validation chain;SPF;critical;critical;SPF includes unregistered domains
+spf_dns_timeout;DNS Timeout on Email Domain;SPF;high;high;DNS timeout on domain used for email (has MX/SPF/DMARC/SMTP)
+spf_recurse;Trivial SPF recurse;SPF;medium;medium;SPF has infinite recursion loop
+spf_dangerous_include;Dangerous SPF include (Email Delivery);SPF;high;high;SPF includes dangerous email delivery service
+spf_dangerous_include;Dangerous SPF include (Shared Hosting);SPF;critical;critical;SPF includes shared hosting service — severity set at runtime from service_type
+spf_dangerous_ip;Dangerous SPF IP range (Email Delivery);SPF;high;high;SPF contains IP from dangerous email service
+spf_dangerous_ip;Dangerous SPF IP range (Shared Hosting);SPF;critical;critical;SPF contains IP from shared hosting — severity set at runtime from service_type
+spf_dangerous_as;Dangerous AS organization (Email Delivery);SPF;high;high;IP belongs to dangerous AS organization (email service)
+spf_dangerous_as;Dangerous AS organization (Shared Hosting);SPF;critical;critical;IP belongs to dangerous AS organization (shared hosting) — severity set at runtime from service_type
+spf_dangerous_ptr;Dangerous PTR mechanism;SPF;high;high;SPF ptr: mechanism matches a dangerous IP range
+spf_syntax_error;SPF Syntax Error;SPF;high;high;SPF record has syntax error
+spf_domain_unregistered;Unregistered domain;SPF;critical;critical;SPF includes an unregistered domain
+spf_domain_potentially_unregistered;Potentially unregistered domain;SPF;high;high;SPF includes a potentially unregistered domain
+no_dmarc;No DMARC;DMARC;critical;critical;No DMARC record found
+dmarc_lax_policy;Lax DMARC policy;DMARC;high;high;DMARC policy is 'none'
+dmarc_lax_subdomain_policy;Lax DMARC subdomain policy;DMARC;medium;medium;DMARC subdomain policy is weak
+dmarc_partial_coverage;Partial DMARC coverage;DMARC;medium;medium;DMARC pct < 100%
+dmarc_dns_timeout;DNS Timeout on Email Domain;DMARC;high;high;DNS timeout on domain used for email (has MX/SPF/DMARC/SMTP)
+dmarc_syntax_error;DMARC Syntax Error;DMARC;high;high;DMARC record has syntax error
+dmarc_invalid_tag;Invalid DMARC Tag;DMARC;medium;medium;DMARC contains unrecognized tag
+dmarc_invalid_tag_value;Invalid DMARC Tag Value;DMARC;medium;medium;DMARC tag has invalid value
+dmarc_invalid_report_uri;Invalid DMARC Report URI;DMARC;low;low;DMARC report URI is malformed
+dmarc_multiple_records;Multiple DMARC Records;DMARC;high;high;Multiple DMARC records found
+dkim_no_selectors;No DKIM selectors found;DKIM;medium;medium;None of the tested DKIM selectors were found for this domain
+dkim_rsa_weak_key;Weak DKIM RSA key size;DKIM;high;high;DKIM RSA key < 1024 bits
+dkim_rsa_perfectible_key;Perfectible DKIM RSA key size;DKIM;low;low;DKIM RSA key = 1024 bits (2048 recommended)
+dkim_dns_timeout;DNS Timeout on Email Domain;DKIM;high;high;DNS timeout on domain used for email (has MX/SPF/DMARC/SMTP)
+dkim_syntax_error;DKIM Syntax Error;DKIM;medium;medium;DKIM record has syntax error
+spf_cname_target_unregistered;SPF domain CNAME points to an unregistered domain;SPF;critical;critical;Registrable domain of broken alias target appears unregistered
+spf_cname_target_potentially_unregistered;SPF domain CNAME points to a potentially unregistered domain;SPF;high;high;No NS, registration of alias target domain unconfirmed
+dmarc_cname_target_unregistered;_dmarc CNAME points to an unregistered domain;DMARC;critical;critical;Registrable domain of broken alias target appears unregistered
+dmarc_cname_target_potentially_unregistered;_dmarc CNAME points to a potentially unregistered domain;DMARC;high;high;No NS, registration of alias target domain unconfirmed
+dkim_cname_target_unregistered;DKIM selector CNAME points to an unregistered domain;DKIM;critical;critical;Registrable domain of broken alias target appears unregistered
+dkim_cname_target_potentially_unregistered;DKIM selector CNAME points to a potentially unregistered domain;DKIM;high;high;No NS, registration of alias target domain unconfirmed

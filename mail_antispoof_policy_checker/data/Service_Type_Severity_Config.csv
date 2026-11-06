@@ -1,0 +1,4 @@
+service_type;severity
+Shared Hosting;critical
+Email Delivery Service;high
+Free Mail Provider;critical

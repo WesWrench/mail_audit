@@ -1,0 +1,13 @@
+{
+  "service": "OVH",
+  "technique": "shared_hosting_local_mta",
+  "date": "2026-08-03",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": {
+    "vector_type": "local_script",
+    "transport": "local_submission"
+  },
+  "probability": "LOW",
+  "note": "OVH verifies the MAIL FROM / Sender field and blocks the spoofed message. The shared-hosting bypass via the local MTA does not work on this infrastructure."
+}

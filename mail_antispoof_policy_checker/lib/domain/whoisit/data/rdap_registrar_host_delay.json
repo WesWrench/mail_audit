@@ -1,0 +1,188 @@
+{
+    "rdap.dynadot.com": {
+        "delay": 2919.03
+    },
+    "rdap.domains.coop": {
+        "delay": 60
+    },
+    "rdap.yoursrs.com": {
+        "delay": 60
+    },
+    "rdap.park.io": {
+        "delay": 4927.8
+    },
+    "rdapserver.net": {
+        "delay": 1.2
+    },
+    "rdap.namecheap.com": {
+        "delay": 3
+    },
+    "rdap.srsplus.com": {
+        "delay": 6
+    },
+    "rdap.namesecure.com": {
+        "delay": 6
+    },
+    "rdap.networksolutions.com": {
+        "delay": 6
+    },
+    "rdap.snapnames.com": {
+        "delay": 6
+    },
+    "rdap.names4ever.com": {
+        "delay": 6
+    },
+    "rdap.variomedia.de": {
+        "delay": 384.4
+    },
+    "rdap.web.com": {
+        "delay": 6
+    },
+    "rdap.misk.com": {
+        "delay": 6
+    },
+    "rdap.scip.es": {
+        "delay": 1
+    },
+    "rdap.lexsynergy.com": {
+        "delay": 576.6
+    },
+    "rdap.gesloten.global": {
+        "delay": 60
+    },
+    "rdap.registrarhub.net": {
+        "delay": 60
+    },
+    "rdap.cosmotown.com": {
+        "delay": 11.42
+    },
+    "rdap.webnic.cc": {
+        "delay": 5.454545454545454
+    },
+    "rdap.domrobot.com": {
+        "delay": 0.8
+    },
+    "rdap.synergywholesale.com": {
+        "delay": 86.73
+    },
+    "rdap.lemarit.net": {
+        "delay": 76.86
+    },
+    "rdap.liquidnetlimited.com": {
+        "delay": 2
+    },
+    "rdap.hostinger.com": {
+        "delay": 1
+    },
+    "rdap.gtld.jprs.jp": {
+        "delay": 1
+    },
+    "rdap.uniregistrar.com": {
+        "delay": 10
+    },
+    "rdap.jp-domains.com": {
+        "delay": 1
+    },
+    "rdap.domainhiveltd.com": {
+        "delay": 0.6741573033707865
+    },
+    "rdap.now.cn": {
+        "delay": 6
+    },
+    "rdap.ukraine.com.ua": {
+        "delay": 1
+    },
+    "rdap.gochinadomains.com": {
+        "delay": 10
+    },
+    "rdap.metaregistrar.com": {
+        "delay": 45
+    },
+    "rdap.planethoster.net": {
+        "delay": 1
+    },
+    "rdap.noip.com": {
+        "delay": 6
+    },
+    "rdap.comlaude.com": {
+        "delay": 1
+    },
+    "rdap.wix.com": {
+        "delay": 8758.24
+    },
+    "rdap.swhosting.com": {
+        "delay": 6
+    },
+    "rdap.digitalcandy.com": {
+        "delay": 2.2222222222222223
+    },
+    "rdap.goaustraliadomains.com": {
+        "delay": 10
+    },
+    "rdap.wildwestdomains.com": {
+        "delay": 10
+    },
+    "rdap.dnsale.com": {
+        "delay": 57.82
+    },
+    "rdap.easy.gr": {
+        "delay": 76.86
+    },
+    "rdap.atom.com": {
+        "delay": 57.82
+    },
+    "rdap.barbero.co.uk": {
+        "delay": 2
+    },
+    "rdap.globaldomaingroup.com": {
+        "delay": 13137.36
+    },
+    "rdap.registrarsafe.com": {
+        "delay": 3.5294117647058822
+    },
+    "rdap.123domain.eu": {
+        "delay": 10
+    },
+    "rdap.loading.es": {
+        "delay": 0.1
+    },
+    "rdap.greenmark.it": {
+        "delay": 2.81
+    },
+    "rdap.domainoriental.com": {
+        "delay": 6
+    },
+    "rdap.registrar.jprs": {
+        "delay": 4.8
+    },
+    "rdap.orangehost.com": {
+        "delay": 1.5384615384615385
+    },
+    "rdap.brandsight.com": {
+        "delay": 1
+    },
+    "rdap.spaceship.com": {
+        "delay": 3
+    },
+    "rdap.registrarsec.com": {
+        "delay": 3.38
+    },
+    "rdap.123-reg.co.uk": {
+        "delay": 1
+    },
+    "rdap.virtualcloudmanager.com": {
+        "delay": 12
+    },
+    "rdap.tnet.hk": {
+        "delay": 5.22
+    },
+    "rdap.osir.com": {
+        "delay": 6
+    },
+    "rdap.gocanadadomains.com": {
+        "delay": 5
+    },
+    "*.rdap.tucows.com": {
+        "delay": 60
+    }
+}

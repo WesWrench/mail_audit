@@ -1,0 +1,16 @@
+{
+  "service": "OVH",
+  "technique": "shared_hosting_shared_smtp",
+  "date": "2026-10-30",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": {
+    "vector_type": "smtp_server",
+    "shared": true,
+    "port": "587/465",
+    "transport": "client_to_server"
+  },
+  "probability": "LOW",
+  "note": "Still blocked (supersedes 2026-08-03). The shared mail server enforces sender ownership: authenticating on OVH shared SMTP and sending a forged From on the hosted domain is rejected.",
+  "source": "Internal test 2026-10-30 (ovh.example.com)"
+}

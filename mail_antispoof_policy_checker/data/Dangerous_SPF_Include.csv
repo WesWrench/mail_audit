@@ -1,0 +1,38 @@
+include;service_type;service_name;dangerous
+_mailcust.gandi.net;Shared Hosting;Gandi;Yes
+mx.ovh.com;Shared Hosting;OVH;Yes
+spf.be-ys.cloud;Shared Hosting;BeYs Cloud;Yes
+_spf.alwaysdata.com;Shared Hosting;AlwaysData;Yes
+namebrightmail.com;Shared Hosting;NameBright;Yes
+spf.mailjet.com;Email Delivery Service;Mailjet;Yes
+spf.mandrillapp.com;Email Delivery Service;Mandrill;Yes
+spf.tipimail.com;Email Delivery Service;Tipimail;Yes
+spf.brevo.com;Email Delivery Service;Brevo;Yes
+sendgrid.net;Email Delivery Service;SendGrid;Yes
+ab.sendgrid.net;Email Delivery Service;SendGrid;Yes
+spf.mailpro.com;Email Delivery Service;Mailpro;Yes
+spf.sendinblue.com;Email Delivery Service;Brevo;Yes
+spf4.sbr-master.net;Marketing Service;Sarbacane;No
+spf2.sbr-master.net;Marketing Service;Sarbacane;No
+spf1.sbr-master.net;Marketing Service;Sarbacane;No
+_spf.arubabusiness.it;Shared Hosting;Aruba Business;Yes
+spf.infomaniak.ch;Shared Hosting;Infomaniak;Yes
+spf.jabatus.fr;Shared Hosting;OS2Switch;Yes
+spf1.net4all.ch;Shared Hosting;VTX.ch;Yes
+spf.viaduc.fr;Shared Hosting;Viaduc;Yes
+sfrbusinessteam.fr;Shared Hosting;SFR Business;No
+spf.mydialoginsight.com;Customer Data Platform;My Dialog Insight;No
+_spf.profils.org;Third-Party Service;Cegid;No
+_spf.i.cegidim.fr;Third-Party Service;Cegidim;No
+_spf.salesforce.com;N/D;SalesForce;No
+_spf.atlassian.net;N/D;Atlassian;No
+spf.efwd.registrar-servers.com;N/D;Namecheap mail forwarding;No
+outlook.com;Free Mail Provider;Outlook.com Service;Yes
+gmail.com;Free Mail Provider;Gmail.com Service;Yes
+yahoo.com;Free Mail Provider;Yahoo.com Service;Yes
+protonmail.com;Free Mail Provider;ProtonMail.com Service;Yes
+163.com;Free Mail Provider;163.com Service;Yes
+aol.com;Free Mail Provider;AOL.com Service;Yes
+gmx.net;Free Mail Provider;GMX.net Service;Yes
+mail.com;Free Mail Provider;mail.com Service;Yes
+icloud.com;Free Mail Provider;iCloud.com Service;Yes

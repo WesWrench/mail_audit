@@ -1,0 +1,10 @@
+{
+  "service": "Brevo",
+  "technique": "delivery_service_web_ui_domain_verification",
+  "date": "2026-08-06",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": { "vector_type": "web_ui" },
+  "note": "Brevo (ex-Sendinblue) blocks arbitrary-From sending from the web UI: a sender/domain must first pass domain authentication (a unique code published as a DNS TXT record, checked against public DNS; DKIM added separately). You cannot spoof an unverified domain's From from the UI. Blocked (spoofing would need control of the target's DNS zone).",
+  "source": "https://help.brevo.com/hc/fr/articles/17286219877778"
+}

@@ -1,0 +1,2 @@
+spf include;service_type;service_name;dangerous
+109.234.163.0/24;Shared Hosting;OS2Switch;Yes

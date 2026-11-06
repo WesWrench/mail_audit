@@ -1,0 +1,209 @@
+{
+    "rdap.register.si": {
+        "delay": 5
+    },
+    "whois.nic.tatar": {
+        "delay": 1
+    },
+    "whois.nic.xn--d1acj3b": {
+        "delay": 1
+    },
+    "rdap.denic.de": {
+        "delay": 1
+    },
+    "rdap.afrinic.net": {
+        "delay": 5
+    },
+    "rdap.nic.ch": {
+        "delay": 45
+    },
+    "rdap.zdnsgtld.com": {
+        "delay": 13.33
+    },
+    "whois.tznic.or.tz": {
+        "delay": 60
+    },
+    "rdap.nic.alstom": {
+        "delay": 6
+    },
+    "rdap.nic.gmx": {
+        "delay": 6
+    },
+    "rdap.nic.lacaixa": {
+        "delay": 6
+    },
+    "rdap.nic.madrid": {
+        "delay": 6
+    },
+    "rdap.nic.nrw": {
+        "delay": 6
+    },
+    "rdap.nic.scot": {
+        "delay": 6
+    },
+    "rdap.nic.swiss": {
+        "delay": 6
+    },
+    "rdap.nic.whoswho": {
+        "delay": 6
+    },
+    "rdap.nic.xn--80asehdb": {
+        "delay": 6
+    },
+    "rdap.nic.xn--80aswg": {
+        "delay": 6
+    },
+    "restwhois.ngtld.cn": {
+        "delay": 5
+    },
+    "rdap.sidn.nl": {
+        "delay": 5
+    },
+    "rdap.nic.ad": {
+        "delay": 6
+    },
+    "rdap.nic.barcelona": {
+        "delay": 6
+    },
+    "rdap.nic.bauhaus": {
+        "delay": 6
+    },
+    "rdap.nic.bayern": {
+        "delay": 6
+    },
+    "rdap.nic.bcn": {
+        "delay": 6
+    },
+    "rdap.nic.erni": {
+        "delay": 6
+    },
+    "rdap.nic.eurovision": {
+        "delay": 6
+    },
+    "rdap.nic.eus": {
+        "delay": 6
+    },
+    "rdap.nic.gal": {
+        "delay": 6
+    },
+    "rdap.nic.ifm": {
+        "delay": 6
+    },
+    "rdap.nic.jprs": {
+        "delay": 6
+    },
+    "rdap.nic.man": {
+        "delay": 6
+    },
+    "rdap.nic.mango": {
+        "delay": 6
+    },
+    "rdap.nic.quebec": {
+        "delay": 6
+    },
+    "rdap.nic.radio": {
+        "delay": 6
+    },
+    "rdap.nic.sap": {
+        "delay": 6
+    },
+    "rdap.nic.seat": {
+        "delay": 6
+    },
+    "rdap.nic.sport": {
+        "delay": 6
+    },
+    "rdap.nic.tel": {
+        "delay": 6
+    },
+    "rdap.nic.xn--mgbab2bd": {
+        "delay": 6
+    },
+    "rdap.nic.amsterdam": {
+        "delay": 2.5
+    },
+    "rdap.nic.politie": {
+        "delay": 2.5
+    },
+    "pubapi.registry.google": {
+        "delay": 1
+    },
+    "rdap.mobile-registry.com": {
+        "delay": 1
+    },
+    "rdap.gtlds.nic.br": {
+        "delay": 5
+    },
+    "rdap.registry.click": {
+        "delay": 1
+    },
+    "rdap.registry.bar": {
+        "delay": 1
+    },
+    "rdap.nic.cat": {
+        "delay": 6
+    },
+    "rdap.nic.firmdale": {
+        "delay": 60
+    },
+    "rdap.norid.no": {
+        "delay": 2
+    },
+    "rdap.registry.hiphop": {
+        "delay": 1
+    },
+    "whois.kyregistry.ky": {
+        "delay": 1
+    },
+    "rdap.nic.locker": {
+        "delay": 1
+    },
+    "rdap.registryservices.music": {
+        "delay": 1
+    },
+    "rdap.lacnic.net": {
+        "delay": 15
+    },
+    "ccrdap.twnic.tw": {
+        "delay": 2
+    },
+    "rdap.registry.coop": {
+        "delay": 1
+    },
+    "rdap.nic.gdn": {
+        "delay": 10
+    },
+    "rdap.nic.ntt": {
+        "delay": 6
+    },
+    "rdap.nic.sakura": {
+        "delay": 6
+    },
+    "rdap.nic.tube": {
+        "delay": 6
+    },
+    "rdap.nic.yandex": {
+        "delay": 1
+    },
+    "rdap.tonicregistry.to": {
+        "delay": 1
+    },
+    "whois.sr": {
+        "delay": 3
+    },
+    "rdap.registry.love": {
+        "delay": 1
+    },
+    "rdap.flexireg.net": {
+        "delay": 20
+    },
+    "rdap.gmoregistry.net": {
+        "delay": 60
+    },
+    "rdap.dns.pl": {
+        "delay": 60
+    },
+    "rdap.nic.li": {
+        "delay": 30
+    }
+}
