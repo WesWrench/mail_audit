@@ -1,0 +1,84 @@
+{
+  "service": "SendGrid",
+  "technique": "delivery_service_web_ui_domain_verification",
+  "date": "2026-10-30",
+  "result": "pass",
+  "effect": "soften",
+  "likelihood": "medium",
+  "probability": "MEDIUM",
+  "vector": {
+    "vector_type": "web_ui"
+  },
+  "note": "Supersedes the 2026-10-29 result with one domain per DMARC policy (and a no-DMARC domain, measured 2026-10-31). The web UI still needs no domain authentication, and the envelope MAIL FROM stays bounces@sendgrid.net, so SPF and DKIM do not align and DMARC fails at every policy. The penalty and the outcome depend on the policy. The outbound IP also varies between sends and can be blacklisted (RBL_MAILSPIKE_WORST +2 on 159.183.225.35). Contrast with a shared-hosting relay that has CLEAN outbound-IP reputation (e.g. AlwaysData): there the same unaligned spoof reaches the Gmail inbox at no-DMARC / p=none. Here SendGrid's bulk IPs carry mixed reputation, so Gmail files the spoof as spam even when DMARC is absent - the outbound-IP reputation, not the DMARC penalty, decides the Gmail verdict.",
+  "by_dmarc": {
+    "absent": {
+      "likelihood": "medium",
+      "note": "Measured 2026-10-31 with SendGrid authorized in SPF but NO DMARC record: Rspamd applies DMARC_NA (+0.5, lower than the +1.5 SOFTFAIL of p=none), but Gmail still files it as SPAM - SendGrid's bulk outbound-IP reputation dominates the no-DMARC relief. An absent record is no safer than p=none for a mixed-reputation sender."
+    },
+    "none": {
+      "likelihood": "medium",
+      "note": "Measured at p=none: Rspamd 1.70/11 (DMARC_POLICY_SOFTFAIL +1.5), Gmail spam, no authentication warning."
+    },
+    "quarantine": {
+      "likelihood": "medium",
+      "impact": "low",
+      "note": "Measured at p=quarantine: Rspamd 7.30/11, spam (DMARC_POLICY_QUARANTINE +3), Gmail spam WITH a warning telling the reader the message is not authenticated and cannot be verified. The warning limits what a delivered spoof can achieve, hence the lower impact."
+    },
+    "reject": {
+      "likelihood": "low",
+      "probability": "LOW",
+      "note": "Measured at p=reject: Rspamd 9.80/11, spam (DMARC_POLICY_REJECT +5.5), never received on Gmail. Remaining path: a receiver that does not act on DMARC or that whitelists SendGrid IPs."
+    }
+  },
+  "observations": [
+    {
+      "dmarc": "absent",
+      "filter": "Rspamd",
+      "score": "low (DMARC_NA +0.5)",
+      "symbols": "DMARC_NA(0.5)"
+    },
+    {
+      "dmarc": "absent",
+      "filter": "Gmail",
+      "score": "spam",
+      "symbols": "filed as spam despite no DMARC record (SendGrid outbound-IP reputation)"
+    },
+    {
+      "dmarc": "p=none",
+      "filter": "Rspamd",
+      "score": "1.70/11",
+      "symbols": "DMARC_POLICY_SOFTFAIL(1.5)"
+    },
+    {
+      "dmarc": "p=quarantine",
+      "filter": "Rspamd",
+      "score": "7.30/11 (spam)",
+      "symbols": "DMARC_POLICY_QUARANTINE(3) RBL_MAILSPIKE_WORST(2)"
+    },
+    {
+      "dmarc": "p=reject",
+      "filter": "Rspamd",
+      "score": "9.80/11 (spam)",
+      "symbols": "DMARC_POLICY_REJECT(5.5) RBL_MAILSPIKE_WORST(2)"
+    },
+    {
+      "dmarc": "p=none",
+      "filter": "Gmail",
+      "score": "spam",
+      "symbols": "no authentication warning"
+    },
+    {
+      "dmarc": "p=quarantine",
+      "filter": "Gmail",
+      "score": "spam",
+      "symbols": "warning: message not authenticated, sender cannot be verified"
+    },
+    {
+      "dmarc": "p=reject",
+      "filter": "Gmail",
+      "score": "not received",
+      "symbols": ""
+    }
+  ],
+  "source": "Internal test 2026-10-30 (sendgridnone / sendgridquarantine / sendgridreject.example.com)"
+}

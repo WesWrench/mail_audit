@@ -1,0 +1,26 @@
+{
+  "service": "AlwaysData",
+  "technique": "shared_hosting_local_mta_no_dmarc",
+  "date": "2026-10-31",
+  "result": "pass",
+  "effect": "confirm",
+  "vector": {
+    "vector_type": "local_script",
+    "transport": "local_submission"
+  },
+  "probability": "CRITICAL",
+  "note": "Also measured against a victim domain that publishes NO DMARC record at all (DMARC absent, not p=none). The Local MTA spoof still works and is delivered to the Gmail INBOX. With no record, Rspamd cannot emit DMARC_POLICY_ALLOW; it emits DMARC_NA (+0.5) instead - but SPF and DKIM both pass (R_SPF_ALLOW -1 on the AlwaysData IP, R_DKIM_ALLOW -1 [alwaysdata.net:s=default], not aligned), so the net score stays negative and the message lands in the inbox. Scoring insight: an ABSENT DMARC record (DMARC_NA +0.5) is penalised LESS by Rspamd than an explicit p=none served through a third party in SPF (DMARC_POLICY_SOFTFAIL +1.5), so for Rspamd publishing nothing is 'cheaper' for the attacker than publishing p=none. On Gmail the message is delivered to the inbox (not spam): SPF PASS (AlwaysData IPv6 2a00:b6e0:1:a022::1), DKIM PASS (alwaysdata.net), DMARC FAIL (no alignment, no record) - Gmail does not spam a no-DMARC domain here. Gmail's exact long-term behaviour for no-DMARC senders is still being characterised.",
+  "observations": [
+    {
+      "filter": "Rspamd",
+      "verdict": "no action -> inbox",
+      "symbols": "R_DKIM_ALLOW(-1) [alwaysdata.net:s=default] R_SPF_ALLOW(-1) [+ip4:188.72.70.0/24] DMARC_NA(0.5) [example.com] ONCE_RECEIVED(0.2) MIME_GOOD(-0.1) [text/plain]"
+    },
+    {
+      "filter": "Gmail",
+      "verdict": "inbox",
+      "symbols": "SPF PASS (2a00:b6e0:1:a022::1), DKIM PASS (alwaysdata.net), DMARC FAIL -> delivered to the inbox (not spam)"
+    }
+  ],
+  "source": "Internal test 2026-10-31 (alwaysdata.example.com spoofing a domain with no DMARC record, PHP mail()/PHPMailer via Local MTA)"
+}

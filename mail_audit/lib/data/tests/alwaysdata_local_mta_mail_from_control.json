@@ -1,0 +1,13 @@
+{
+  "service": "AlwaysData",
+  "technique": "shared_hosting_local_mta",
+  "date": "2026-08-03",
+  "result": "pass",
+  "effect": "confirm",
+  "vector": {
+    "vector_type": "local_script",
+    "transport": "local_submission"
+  },
+  "probability": "CRITICAL",
+  "note": "Perfect spoof via the local MTA (e.g. `mail -f` / Sender field): the MAIL FROM is aligned with the hosted domain, which is listed in SPF. DMARC is bypassed even under p=reject."
+}

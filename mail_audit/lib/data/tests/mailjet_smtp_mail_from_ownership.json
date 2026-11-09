@@ -1,0 +1,14 @@
+{
+  "service": "Mailjet",
+  "technique": "delivery_service_smtp_mail_from_ownership",
+  "date": "2026-08-06",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": {
+    "vector_type": "smtp_server",
+    "port": "587/465",
+    "transport": "client_to_server"
+  },
+  "note": "The SMTP relay only accepts validated senders/domains tied to the account - an arbitrary MAIL FROM is impossible. Blocked (the local-script vector (trusted_local_submission) is not applicable - Mailjet is a mail service, not a host).",
+  "source": "https://documentation.mailjet.com/hc/fr/articles/360042561594"
+}

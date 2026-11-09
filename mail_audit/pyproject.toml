@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mail-audit"
+version = "2.2.0"
+description = "Combined mail security auditing tool: SMTP checks + AntiSpoof policy analysis + Attack scenario generation"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["email", "security", "smtp", "spf", "dmarc", "dkim", "audit", "phishing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Topic :: Communications :: Email",
+    "Topic :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+# NOTE: smtp_checker and mail_antispoof_policy_checker are sibling packages in
+# this repo, installed as local editable installs (`pip install -e`, see README).
+# They are NOT published on any package index, so they are intentionally omitted
+# here to avoid pip trying to resolve them from PyPI. Only real published
+# dependencies are declared below. Install order (smtp_checker →
+# mail_antispoof_policy_checker → mail_audit) is the contract that guarantees
+# the sibling imports resolve at runtime.
+dependencies = [
+    "pandas>=1.3.0",
+    "openpyxl>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+mail-audit = "mail_audit.cli:main"
+
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["mail_audit", "mail_audit.*"]
+
+[tool.setuptools.package-data]
+"mail_audit.lib.data" = ["*.json", "*.csv", "*.txt"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true

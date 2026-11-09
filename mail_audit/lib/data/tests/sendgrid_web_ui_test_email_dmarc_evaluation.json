@@ -1,0 +1,19 @@
+{
+  "service": "SendGrid",
+  "technique": "delivery_service_web_ui_domain_verification",
+  "date": "2026-10-29",
+  "result": "pass",
+  "effect": "soften",
+  "likelihood": "medium",
+  "probability": "MEDIUM",
+  "vector": { "vector_type": "web_ui" },
+  "note": "Supersedes the 2026-08-06 result: NO domain authentication is needed - Email API > Dynamic Templates > Test your email sends with a free From. But the envelope MAIL FROM is fixed to bounces@sendgrid.net (not configurable in the UI): FORGED_SENDER is always raised and neither SPF (sendgrid.net) nor DKIM (d=sendgrid.net s=smtpapi) aligns, so DMARC FAILS whatever the policy. p=none does NOT skip the alignment check: receivers still evaluate DMARC and score the failure (Rspamd DMARC_POLICY_SOFTFAIL +1.5 at p=none, DMARC_POLICY_QUARANTINE +3 at p=quarantine). The outcome then depends on the SendGrid outbound IP reputation (RBL_MAILSPIKE_WORST +2 / RBL_MAILSPIKE_BAD +1 seen on some IPs): default Rspamd scored 3.2 to 7.3/11 at p=quarantine (inbox or spam depending on the IP) and 4.8/11 (greylist) at p=none; Gmail filed it as SPAM in both cases, with an 'unauthenticated sender ... via sendgrid.net' warning at p=quarantine. Realistic success path: a target organization that whitelists SendGrid IPs (frequent when it uses SendGrid itself) or a well-reputed outbound IP. No DMARC bypass.",
+  "observations": [
+    { "dmarc": "p=quarantine", "filter": "Rspamd (default)", "score": "7.30/11", "symbols": "DMARC_POLICY_QUARANTINE(3) R_DKIM_ALLOW(-1) R_SPF_ALLOW(-1) URI_COUNT_ODD(1) MID_RHS_NOT_FQDN(0.5) MV_CASE(0.5) FORGED_SENDER(0.3) MIME_GOOD(-0.1)" },
+    { "dmarc": "p=quarantine", "filter": "Rspamd (default)", "score": "3.20/11 (not spam)", "symbols": "same, different outbound IP" },
+    { "dmarc": "p=none", "filter": "Rspamd (default)", "score": "4.80/11 (greylist)", "symbols": "DMARC_POLICY_SOFTFAIL(1.5) RBL_MAILSPIKE_BAD(1) URI_COUNT_ODD(1) MID_RHS_NOT_FQDN(0.5) MV_CASE(0.5) FORGED_SENDER(0.3) BAD_REP_POLICIES(0.1) MIME_GOOD(-0.1)" },
+    { "dmarc": "p=quarantine", "filter": "Gmail", "score": "spam", "symbols": "warning: message not authenticated, sender cannot be verified (via sendgrid.net)" },
+    { "dmarc": "p=none", "filter": "Gmail", "score": "spam", "symbols": "no authentication warning" }
+  ],
+  "source": "Internal test 2026-10-29 (sendgrid.example.com p=quarantine, sendgrid2.example.com p=none)"
+}

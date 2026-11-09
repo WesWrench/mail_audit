@@ -1,0 +1,591 @@
+{
+  "_comment": "All attack scenario templates for mail_audit. Python evaluates conditions; this file owns descriptions, names, remediations, vectors and probability rules. Use {variable} placeholders for runtime values.",
+  "version": "2.0",
+
+  "_risk_model_comment": "Risk = impact x probability. impact (low/medium/high/critical) = severity IF the technique delivers a spoof (smtp_server/local_mta can set the MAIL FROM => critical; web_ui is restricted => medium; MITM network => high). probability (very_low/low/medium/high/very_high) = how likely the technique actually works today (vector_defaults, then template / dated tests; status blocked => very_low). risk (low/moderate/high/critical) = risk_matrix[impact][probability]. A scenario's risk = the worst vector risk; its probability = the probability of that vector. The 'probability' keys of scenario templates and dated tests (CRITICAL/HIGH/...) are an internal baseline, used only for a scenario without vectors.",
+
+  "risk_matrix": {
+    "_comment": "risk = risk_matrix[impact][probability]. Impact: low/medium/high/critical. Probability: very_low/low/medium/high/very_high. Risk: low/moderate/high/critical.",
+    "critical": { "very_low": "low", "low": "moderate", "medium": "high",     "high": "critical", "very_high": "critical" },
+    "high":     { "very_low": "low", "low": "moderate", "medium": "high",     "high": "high",     "very_high": "critical" },
+    "medium":   { "very_low": "low", "low": "low",      "medium": "moderate", "high": "high",     "very_high": "high" },
+    "low":      { "very_low": "low", "low": "low",      "medium": "low",      "high": "moderate", "very_high": "moderate" }
+  },
+  "vector_defaults": {
+    "_comment": "Per-technique intrinsic impact + baseline likelihood, keyed by the vector's vector_type. A vector may override either inline; status=blocked forces likelihood=low; dated tests override too.",
+    "web_ui":           { "impact": "medium",   "likelihood": "high" },
+    "http_api":         { "impact": "critical", "likelihood": "medium" },
+    "smtp_server":      { "impact": "critical", "likelihood": "medium" },
+    "local_script":     { "impact": "critical", "likelihood": "high" },
+    "email_forwarding": { "impact": "critical", "likelihood": "medium" },
+    "network":          { "impact": "high",     "likelihood": "medium" },
+    "default":          { "impact": "high",     "likelihood": "medium" }
+  },
+
+  "internal_mitm": {
+    "_comment": "MITM scenarios target the MX host and are merged per (MX host, case) across domains. Conditions separate what is MEASURED (DNS / SMTP results) from what is ASSUMED (on-path position, sender behaviour), which the audit cannot test. {dane_condition} / {dane_clause} / {sts_condition} / {tlsa_state} are filled by the analyzer. Without MTA-STS enforce or usable DANE, opportunistic senders do not validate the MX certificate (RFC 7435): any attacker certificate works. A Web PKI (CA) certificate is only needed against MTA-STS enforce. TLSA records that are not DNSSEC-validated are ignored by DANE senders.",
+    "ssl_stripping_absent": {
+      "attack_category": "MITM",
+      "attack_type": "MITM_SSL_STRIPPING",
+      "probability": "HIGH",
+      "scenario_name": "STARTTLS Downgrade / SSL Stripping on {mx_host}",
+      "conditions_met": [
+        "Measured: no valid MTA-STS policy for {domain}",
+        "Measured: {dane_condition}",
+        "Assumed (not tested): an on-path position between a sending MTA and {mx_host} (BGP hijack, compromised upstream network or relay)",
+        "Assumed (not tested): a sending MTA using opportunistic STARTTLS (the default), i.e. without a local policy that requires TLS"
+      ],
+      "description_template": "Mail addressed to {domain} is delivered to the MX '{mx_host}'. These domains publish no valid MTA-STS policy{dane_clause}, so nothing they publish tells sending MTAs to require TLS. An on-path attacker can strip the '250-STARTTLS' capability from the EHLO response: a sending MTA using opportunistic STARTTLS (the default) then delivers in plaintext, unless its own local policy requires TLS. The attacker can read and modify the messages in transit. Content encrypted end-to-end (S/MIME, OpenPGP) stays encrypted; headers, envelope and the rest of the message are exposed. MTA-STS in enforce mode (RFC 8461) makes compatible senders require TLS with a valid certificate for the listed MX; DANE (RFC 7672) does the same for DANE-aware senders.",
+      "remediation": "MTA-STS, for EACH recipient domain ({domain}) — a policy is never inherited from a parent domain: (1) TXT record _mta-sts.<domain> = \"v=STSv1; id=<YYYYMMDDhhmmss>\" (change the id on every policy update); (2) policy served over HTTPS with a valid certificate at https://mta-sts.<domain>/.well-known/mta-sts.txt: 'version: STSv1', 'mode: enforce', 'mx: {mx_host}', 'max_age: 604800' (or more) — start with 'mode: testing' and switch to enforce once the reports are clean; (3) TLS-RPT record _smtp._tls.<domain> = \"v=TLSRPTv1; rua=mailto:<address>\" for visibility (it reports failures, it does not block anything); (4) keep a publicly trusted, valid certificate on {mx_host} matching its name. Note: MTA-STS protects compatible senders once the policy is cached; the very first delivery, before the policy is fetched, stays exposed. DANE (RFC 7672): DNSSEC-sign BOTH the zone of each recipient domain (so the MX lookup itself is authenticated — signing only the TLSA records is not enough) and the zone of {mx_host}; publish _25._tcp.{mx_host} TLSA 3 1 1 <SHA-256 of the server public key>; on every key rotation publish the TLSA of the next key before switching (current + next records). Only DANE-aware sending MTAs enforce it.",
+      "bypass_notes": [
+        "N/A — transport attack: SPF / DKIM / DMARC are not bypassed, the attacker reads or alters the mail in transit.",
+        "If the attacker modifies DKIM-signed parts, DKIM fails; DMARC can still pass through an aligned SPF pass when the attacker relays the original session from the sender's IP."
+      ],
+      "vectors": [
+        {
+          "vector_type": "network",
+          "impact": "high",
+          "likelihood": "medium",
+          "auth_mode": "not_applicable",
+          "status": "CONFIRMED",
+          "steps": "1. Gain an on-path position between the sending MTA and {mx_host}.\n2. Proxy the SMTP connection and strip '250-STARTTLS' from the EHLO response.\n3. A sending MTA using opportunistic STARTTLS (no MTA-STS enforce, no DANE, no local TLS-required policy) continues in plaintext.\n4. Read or modify the message, then relay it to {mx_host}."
+        }
+      ]
+    },
+    "ssl_stripping_non_enforce": {
+      "attack_category": "MITM",
+      "attack_type": "MITM_SSL_STRIPPING",
+      "probability": "MEDIUM",
+      "scenario_name": "STARTTLS Downgrade / SSL Stripping on {mx_host}",
+      "conditions_met": [
+        "Measured: MTA-STS policy of {domain} in mode '{mode}' (not 'enforce')",
+        "Measured: {dane_condition}",
+        "Assumed (not tested): an on-path position between a sending MTA and {mx_host} (BGP hijack, compromised upstream network or relay)",
+        "Assumed (not tested): a sending MTA using opportunistic STARTTLS (the default), i.e. without a local policy that requires TLS"
+      ],
+      "description_template": "Mail addressed to {domain} is delivered to the MX '{mx_host}' under an MTA-STS policy in mode '{mode}' instead of 'enforce'{dane_clause}. In 'testing' mode sending MTAs report TLS failures (TLS-RPT) but still deliver, so the downgrade works as without MTA-STS — the reports can only reveal it afterwards; in 'none' mode the policy has no effect. An on-path attacker can strip STARTTLS and senders using opportunistic STARTTLS deliver in plaintext. Content encrypted end-to-end (S/MIME, OpenPGP) stays encrypted; headers, envelope and the rest of the message are exposed.",
+      "remediation": "MTA-STS, for EACH recipient domain ({domain}) — a policy is never inherited from a parent domain: (1) TXT record _mta-sts.<domain> = \"v=STSv1; id=<YYYYMMDDhhmmss>\" (change the id on every policy update); (2) policy served over HTTPS with a valid certificate at https://mta-sts.<domain>/.well-known/mta-sts.txt: 'version: STSv1', 'mode: enforce', 'mx: {mx_host}', 'max_age: 604800' (or more) — start with 'mode: testing' and switch to enforce once the reports are clean; (3) TLS-RPT record _smtp._tls.<domain> = \"v=TLSRPTv1; rua=mailto:<address>\" for visibility (it reports failures, it does not block anything); (4) keep a publicly trusted, valid certificate on {mx_host} matching its name. Note: MTA-STS protects compatible senders once the policy is cached; the very first delivery, before the policy is fetched, stays exposed. DANE (RFC 7672): DNSSEC-sign BOTH the zone of each recipient domain (so the MX lookup itself is authenticated — signing only the TLSA records is not enough) and the zone of {mx_host}; publish _25._tcp.{mx_host} TLSA 3 1 1 <SHA-256 of the server public key>; on every key rotation publish the TLSA of the next key before switching (current + next records). Only DANE-aware sending MTAs enforce it.",
+      "bypass_notes": [
+        "N/A — transport attack: SPF / DKIM / DMARC are not bypassed, the attacker reads or alters the mail in transit.",
+        "If the attacker modifies DKIM-signed parts, DKIM fails; DMARC can still pass through an aligned SPF pass when the attacker relays the original session from the sender's IP."
+      ],
+      "vectors": [
+        {
+          "vector_type": "network",
+          "impact": "high",
+          "likelihood": "medium",
+          "auth_mode": "not_applicable",
+          "status": "CONFIRMED",
+          "steps": "1. Gain an on-path position between the sending MTA and {mx_host}.\n2. Proxy the SMTP connection and strip '250-STARTTLS' from the EHLO response.\n3. A sending MTA using opportunistic STARTTLS (no MTA-STS enforce, no DANE, no local TLS-required policy) continues in plaintext.\n4. Read or modify the message, then relay it to {mx_host}."
+        }
+      ]
+    },
+    "fake_cert_opportunistic": {
+      "attack_category": "MITM",
+      "attack_type": "MITM_FAKE_CERT",
+      "probability": "MEDIUM",
+      "scenario_name": "TLS Interception with an Attacker Certificate on {mx_host} (no certificate validation required)",
+      "conditions_met": [
+        "Measured: MTA-STS for {domain}: {sts_condition}",
+        "Measured: no usable DANE for {mx_host} ({tlsa_state})",
+        "Assumed (not tested): an on-path position between a sending MTA and {mx_host} (BGP hijack, compromised upstream network or relay)",
+        "Assumed (not tested): a sending MTA using opportunistic STARTTLS, which does not authenticate the MX certificate (RFC 7435) — the default without MTA-STS enforce or DANE"
+      ],
+      "description_template": "Mail addressed to {domain} is delivered to the MX '{mx_host}'. Neither an MTA-STS policy in enforce mode nor usable DANE requires sending MTAs to authenticate the certificate of '{mx_host}'. Senders using opportunistic STARTTLS encrypt the session but accept any certificate: an on-path attacker terminates TLS with a certificate it controls (a self-signed one is enough — no CA compromise or mis-issuance is needed), reads or modifies the mail, then relays it. Unlike a downgrade, the session stays encrypted, so it does not appear as plaintext delivery. Content encrypted end-to-end (S/MIME, OpenPGP) stays encrypted; headers, envelope and the rest of the message are exposed.",
+      "remediation": "MTA-STS, for EACH recipient domain ({domain}) — a policy is never inherited from a parent domain: (1) TXT record _mta-sts.<domain> = \"v=STSv1; id=<YYYYMMDDhhmmss>\" (change the id on every policy update); (2) policy served over HTTPS with a valid certificate at https://mta-sts.<domain>/.well-known/mta-sts.txt: 'version: STSv1', 'mode: enforce', 'mx: {mx_host}', 'max_age: 604800' (or more) — start with 'mode: testing' and switch to enforce once the reports are clean; (3) TLS-RPT record _smtp._tls.<domain> = \"v=TLSRPTv1; rua=mailto:<address>\" for visibility (it reports failures, it does not block anything); (4) keep a publicly trusted, valid certificate on {mx_host} matching its name. Note: MTA-STS protects compatible senders once the policy is cached; the very first delivery, before the policy is fetched, stays exposed. DANE (RFC 7672): DNSSEC-sign BOTH the zone of each recipient domain (so the MX lookup itself is authenticated — signing only the TLSA records is not enough) and the zone of {mx_host}; publish _25._tcp.{mx_host} TLSA 3 1 1 <SHA-256 of the server public key>; on every key rotation publish the TLSA of the next key before switching (current + next records). Only DANE-aware sending MTAs enforce it.",
+      "bypass_notes": [
+        "N/A — transport attack: SPF / DKIM / DMARC are not bypassed, the attacker reads or alters the mail in transit.",
+        "If the attacker modifies DKIM-signed parts, DKIM fails; DMARC can still pass through an aligned SPF pass when the attacker relays the original session from the sender's IP."
+      ],
+      "vectors": [
+        {
+          "vector_type": "network",
+          "impact": "high",
+          "likelihood": "medium",
+          "auth_mode": "not_applicable",
+          "status": "UNVERIFIED",
+          "steps": "1. Gain an on-path position between the sending MTA and {mx_host}.\n2. Answer the SMTP session and the STARTTLS handshake with any certificate (self-signed is enough).\n3. A sending MTA using opportunistic STARTTLS accepts it (no MTA-STS enforce, no usable DANE).\n4. Read or modify the message, then relay it to {mx_host}."
+        }
+      ]
+    },
+    "fake_cert_pkix": {
+      "attack_category": "MITM",
+      "attack_type": "MITM_FAKE_CERT",
+      "probability": "LOW",
+      "scenario_name": "Fraudulent CA-Issued Certificate for {mx_host} (MTA-STS enforce, no DANE)",
+      "conditions_met": [
+        "Measured: MTA-STS for {domain} in mode 'enforce': compatible senders validate the certificate of {mx_host} against the Web PKI (CA store)",
+        "Measured: no usable DANE for {mx_host} ({tlsa_state})",
+        "Assumed (not tested): an on-path position between a sending MTA and {mx_host} (BGP hijack, compromised upstream network or relay)",
+        "Assumed (not tested): a certificate for {mx_host} issued by a publicly trusted CA to the attacker (mis-issuance, CA compromise, or hijacked domain validation)"
+      ],
+      "description_template": "Mail addressed to {domain} is protected by MTA-STS in enforce mode: compatible senders require TLS and a certificate for '{mx_host}' valid in the Web PKI. Without DANE, that certificate is not pinned: an on-path attacker holding a publicly trusted certificate for '{mx_host}' (mis-issuance, CA compromise, hijacked domain validation) is accepted. This is the residual risk of PKIX validation; senders without MTA-STS support remain exposed to the opportunistic-TLS attacks. Content encrypted end-to-end (S/MIME, OpenPGP) stays encrypted; headers, envelope and the rest of the message are exposed.",
+      "remediation": "DANE (RFC 7672): DNSSEC-sign BOTH the zone of each recipient domain (so the MX lookup itself is authenticated — signing only the TLSA records is not enough) and the zone of {mx_host}; publish _25._tcp.{mx_host} TLSA 3 1 1 <SHA-256 of the server public key>; on every key rotation publish the TLSA of the next key before switching (current + next records). Only DANE-aware sending MTAs enforce it. Monitor Certificate Transparency logs for certificates issued for {mx_host} and restrict issuance with a CAA record.",
+      "bypass_notes": [
+        "N/A — transport attack: SPF / DKIM / DMARC are not bypassed, the attacker reads or alters the mail in transit.",
+        "If the attacker modifies DKIM-signed parts, DKIM fails; DMARC can still pass through an aligned SPF pass when the attacker relays the original session from the sender's IP."
+      ],
+      "vectors": [
+        {
+          "vector_type": "network",
+          "impact": "high",
+          "likelihood": "low",
+          "auth_mode": "not_applicable",
+          "status": "UNVERIFIED",
+          "steps": "1. Obtain a publicly trusted certificate for {mx_host} (mis-issuance, CA compromise, hijacked domain validation).\n2. Gain an on-path position between the sending MTA and {mx_host}.\n3. Present that certificate: it passes the MTA-STS (PKIX) validation, no TLSA pin rejects it.\n4. Read or modify the message, then relay it to {mx_host}."
+        }
+      ]
+    },
+    "tlsa_without_dnssec": {
+      "attack_category": "MITM",
+      "attack_type": "MITM_TLSA_NO_DNSSEC",
+      "probability": "HIGH",
+      "scenario_name": "TLSA Records Without DNSSEC on {mx_host} (DANE ignored)",
+      "conditions_met": [
+        "Measured: TLSA records published at _25._tcp.{mx_host}",
+        "Measured: they are not DNSSEC-validated",
+        "Consequence: DANE-aware senders ignore TLSA records that are not DNSSEC-authenticated (RFC 7672) — the MX has no DANE protection"
+      ],
+      "description_template": "The MX server '{mx_host}' (receiving mail for {domain}) publishes TLSA records, but they are not DNSSEC-validated. Sending MTAs only use DNSSEC-authenticated TLSA records (RFC 7672): these are ignored, so '{mx_host}' has no DANE protection at all, while its operator may believe it has. An attacker does not even need to spoof them: the attacks against an MX without DANE apply (STARTTLS downgrade, attacker certificate), unless MTA-STS enforce protects the domain.",
+      "remediation": "DANE (RFC 7672): DNSSEC-sign BOTH the zone of each recipient domain (so the MX lookup itself is authenticated — signing only the TLSA records is not enough) and the zone of {mx_host}; publish _25._tcp.{mx_host} TLSA 3 1 1 <SHA-256 of the server public key>; on every key rotation publish the TLSA of the next key before switching (current + next records). Only DANE-aware sending MTAs enforce it.",
+      "bypass_notes": [
+        "N/A — transport attack: SPF / DKIM / DMARC are not bypassed, the attacker reads or alters the mail in transit.",
+        "If the attacker modifies DKIM-signed parts, DKIM fails; DMARC can still pass through an aligned SPF pass when the attacker relays the original session from the sender's IP."
+      ],
+      "vectors": [
+        {
+          "vector_type": "network",
+          "impact": "high",
+          "likelihood": "medium",
+          "auth_mode": "not_applicable",
+          "status": "CONFIRMED",
+          "steps": "1. The TLSA records of {mx_host} are ignored by DANE-aware senders (no DNSSEC).\n2. Gain an on-path position between the sending MTA and {mx_host}.\n3. Strip STARTTLS or present any certificate (see the downgrade / attacker certificate scenarios)."
+        }
+      ]
+    }
+  },
+  "external_spoofing": {
+
+    "service_type_attack_type": {
+      "Email Delivery Service": "SPOOFING_EMAIL_SERVICE",
+      "Free Mail Provider":     "SPOOFING_FREE_EMAIL",
+      "Shared Hosting":         "SPOOFING_SHARED_HOSTING",
+      "default":                "SPOOFING_EMAIL_SERVICE"
+    },
+
+    "_probability_model_comment": "NOTE: the CRITICAL/HIGH/MEDIUM/LOW values in service_type_probability / probability_by_dmarc / scenario 'probability' keys are internal BASELINES (fallback for a scenario without vectors); the exported probability (very_low..very_high) and risk level (low/moderate/high/critical) are computed from the vectors with risk_matrix. Probability = f(vector, DMARC state). THREE vector classes. (1) Shared Hosting ALIGNS: with local-MTA auth the attacker sends from an SPF-authorized IP AND overwrites MAIL FROM to the victim domain -> SPF aligned -> DMARC actually PASSES, even at p=reject. DMARC-independent, status-driven: an untested mutualised host defaults to HIGH (assumed abusable but not proven), a confirmed one is CRITICAL, all_blocked -> LOW. Dated tests refine it (e.g. AlwaysData confirm -> CRITICAL, OVH -> LOW). (2) A reputable service the victim lists in its SPF (Free Mail Gmail/Outlook, Email Delivery SendGrid): the forged From is NOT aligned so DMARC fails, BUT the From-domain's own SPF authorizes the sending IP and the service reputation (e.g. Proofpoint is used to seeing that IP) defeats non-RFC heuristics. So it lands even at p=reject -> probability follows the DMARC state: dmarc_none CRITICAL, dmarc_absent HIGH (some receivers reject a no-DMARC domain or apply their own policy), dmarc_enforced MEDIUM. (3) An own well-configured server (IP NOT in the victim SPF): with no DMARC there is no alignment to satisfy, so the attacker authorizes their own IP in their own SPF and signs with their own DKIM key and it is delivered -> dmarc_none CRITICAL, dmarc_absent HIGH; blocked once DMARC is enforced (no reputation to fall back on). p=none > absent throughout. Dated tests in data/tests/ OVERRIDE these baselines per specific service. Keys: shared hosting uses confirmed/unverified; SPF-listed services use dmarc_none/dmarc_absent/dmarc_enforced; all_blocked -> LOW.",
+
+    "service_type_probability": {
+      "Free Mail Provider":     { "dmarc_none": "CRITICAL", "dmarc_absent": "HIGH", "dmarc_enforced": "MEDIUM", "all_blocked": "LOW" },
+      "Email Delivery Service": { "dmarc_none": "CRITICAL", "dmarc_absent": "HIGH", "dmarc_enforced": "MEDIUM", "all_blocked": "LOW" },
+      "Shared Hosting":         { "confirmed": "CRITICAL",  "unverified": "HIGH",     "all_blocked": "LOW" },
+      "default":                { "dmarc_none": "CRITICAL", "dmarc_absent": "HIGH", "dmarc_enforced": "MEDIUM", "all_blocked": "LOW" }
+    },
+
+    "generic_custom_server": {
+      "attack_type": "SPOOFING_NO_DMARC_ENFORCEMENT",
+      "probability_by_dmarc": { "none": "CRITICAL", "absent": "HIGH" },
+      "probability": "HIGH",
+      "scenario_name": "Direct Email Spoofing via a Well-Configured or Reputation-Bearing Server",
+      "conditions_met": [
+        "{dmarc_condition}",
+        "No enforcing DMARC: the alignment failure carries no reject/quarantine instruction — the attacker uses their OWN well-configured mail server",
+        "Note: with p=none DMARC is still EVALUATED — receivers score the failure (e.g. Rspamd DMARC_POLICY_SOFTFAIL +1.5, Gmail may file it as spam): delivery depends on the other signals",
+        "Own IP authorized in the attacker's own SPF + message DKIM-signed with the attacker's key -> passes basic sanity checks",
+        "Reality check (Gmail): a COLD well-configured server has NO sending reputation, so Gmail files the spoof as SPAM even at p=none / no-DMARC — valid PTR/SPF/DKIM for the attacker's OWN domain clears authentication, not inbox placement",
+        "Reputation decides the inbox, not configuration: the SAME unaligned spoof sent through a reputation-bearing shared/relay host (e.g. a shared-hosting outbound pool such as AlwaysData) reaches the Gmail INBOX at no-DMARC / p=none, SPAM at p=quarantine, REJECTED at p=reject"
+      ],
+      "description_template": "Because {dmarc_condition_lower}, an attacker can spoof 'From: anyone@{domain}' from their OWN well-configured SMTP server. Since there is no enforcing DMARC policy, the alignment failure carries no reject/quarantine instruction (receivers still evaluate it and may score it, e.g. Rspamd DMARC_POLICY_SOFTFAIL, Gmail spam folder): the attacker authorizes their own sending IP in their own SPF and signs the message with their own DKIM key, so the message passes basic authentication and sanity checks (valid PTR, HELO). A p=none policy is the most dangerous (receivers are explicitly told not to act); an absent record is slightly less so because some receivers reject a no-DMARC domain or apply their own policy. This baseline capability exists for ANY domain that does not enforce DMARC — no third-party service needed. REALITY CHECK: being well-configured only clears authentication and sanity checks — it does NOT by itself earn inbox placement at a large provider. Measured on Gmail, a COLD attacker server (correct PTR/SPF/DKIM for the attacker's own domain, but no sending reputation) is filed as SPAM even at p=none or with no DMARC record, because Gmail weighs sending-domain / IP reputation and volume. What changes the outcome is reputation, not configuration: the same unaligned spoof — From on the victim domain, MAIL FROM/SPF/DKIM on the relay (FORGED_SENDER, DMARC not aligned) — sent through a REPUTATION-BEARING shared/relay host (e.g. a shared-hosting outbound pool such as AlwaysData) reaches the Gmail INBOX at no-DMARC and p=none, lands in SPAM at p=quarantine, and is REJECTED at p=reject, as the DMARC policy penalty climbs (Rspamd roughly -1.1 no-DMARC, -0.1 p=none, +1.4 p=quarantine, +3.9 p=reject).",
+      "remediation": "Publish an enforcing DMARC policy (p=quarantine, then p=reject). A p=none policy or an absent record leaves the header From forgeable from any well-configured server.",
+      "vectors": [
+        {
+          "vector_type": "smtp_server",
+          "auth_mode": "none",
+          "status": "CONFIRMED",
+          "port": "25",
+          "transport": "server_to_server",
+          "steps": "1. Stand up a well-configured MTA (valid PTR/rDNS, HELO, its own SPF authorizing its IP, its own DKIM key).\n2. Set From: ceo@{domain}.\n3. Send directly to the recipient's MX on port 25.\n4. No DMARC to enforce alignment -> accepted with the forged From. NOTE: a COLD server with no sending reputation is typically filed as SPAM by large providers (Gmail) even here — inbox placement needs reputation (see the other vectors)."
+        },
+        {
+          "vector_type": "smtp_server",
+          "auth_mode": "account",
+          "port": "587/465",
+          "transport": "client_to_server",
+          "steps": "1. Use a REPUTATION-BEARING relay / provider you have an account on (authenticated submission, 587/465).\n2. Set From: ceo@{domain} (unaligned: From on the victim domain, MAIL FROM/SPF/DKIM on the relay -> FORGED_SENDER).\n3. The relay's outbound-IP reputation carries the message: at p=none / no-DMARC it reaches the Gmail INBOX, spam at p=quarantine, rejected at p=reject."
+        },
+        {
+          "vector_type": "local_script",
+          "auth_mode": "none",
+          "transport": "local_submission",
+          "steps": "1. Use a local MTA on a reputation-bearing shared host (e.g. PHP mail()/PHPMailer), which submits without SMTP auth.\n2. Set From: ceo@{domain}.\n3. The message leaves the host's reputable outbound IPs with its own SPF/DKIM -> at p=none / no-DMARC it reaches the inbox."
+        }
+      ]
+    },
+
+    "shared_hosting_spoofing_template": {
+      "scenario_name": "Email Spoofing via {service_name} (Shared Hosting)",
+      "conditions_met": [
+        "SPF record includes '{service_name}' shared/mutualised mail infrastructure",
+        "{dmarc_condition}",
+        "MAIL FROM can be set to the victim domain on the shared host (e.g. `mail -f`, PHPMyAdmin Sender) -> SPF aligned -> DMARC bypassed"
+      ],
+      "description_template": "The domain '{domain}' includes '{service_name}' ({service_type}) in its SPF record. On this shared/mutualised mail platform an attacker with an account (or hosting) can control the envelope MAIL FROM and set it to '{domain}'. The message then leaves an IP that is already SPF-authorized for '{domain}', and the MAIL FROM aligns with the header From — so DMARC passes on the SPF branch EVEN WITH p=reject or p=quarantine. This is a direct quickwin and does not require DMARC to be weak. {dmarc_condition}.",
+      "remediation": "This cannot be fixed by DMARC alone. Ensure the shared-hosting provider enforces MAIL FROM / Sender ownership (many now do). If the provider does not, avoid listing its shared SPF include, or move to a dedicated sending domain with strict alignment control."
+    },
+
+    "service_spoofing_template": {
+      "scenario_name": "Email Spoofing via {service_name}",
+      "conditions_met": [
+        "{dmarc_condition}",
+        "SPF record includes '{service_name}' infrastructure ({service_type})",
+        "Forged From-domain SPF matches the sending IP -> helps against reputation heuristics, but DMARC still fails (not aligned, even at p=none) and the verdict depends on the service outbound IP reputation / a possible whitelisting by the target"
+      ],
+      "description_template": "The domain '{domain}' includes '{service_name}' ({service_type}) in its SPF record, and {dmarc_condition_lower}. An attacker with an account on '{service_name}' can send 'From: spoofed@{domain}': the sending IPs are already whitelisted in the domain's SPF, so the forged header From-domain's own SPF matches the source IP. This defeats advanced anti-spam heuristics that cross-check the From domain against the sending IP, and the mail inherits the reputation of a well-known sending platform (e.g. filters like Proofpoint routinely see this IP). The message is NOT DMARC-aligned (DMARC fails at every policy — p=none only removes the reject/quarantine instruction; the failure is still scored, e.g. Rspamd DMARC_POLICY_SOFTFAIL, and the delivery verdict then depends on the service's outbound IP reputation and on a possible whitelisting of the service by the target), so probability tracks the DMARC state: p=none is worst (receivers told not to act), then an absent record; p=quarantine sends the message to spam, and p=reject stops it at receivers that honour DMARC. Dated tests refine the level per service (see Conditions Met).",
+      "remediation": "Enforce DMARC with p=reject (or p=quarantine as a first step). This prevents spoofed emails from being delivered even when SPF passes for the service's IPs.",
+        "remediation_by_dmarc": {
+          "quarantine": "Move DMARC to p=reject: with p=quarantine the spoof still reaches the spam folder, where a user can open it. Remove '{service_name}' from the SPF record if the domain no longer sends through it.",
+          "reject": "DMARC p=reject already stops this spoof at receivers that honour DMARC: keep it. Remove '{service_name}' from the SPF record if the domain no longer sends through it, and do not whitelist the service's IPs on your own mail gateway."
+        }
+    },
+
+    "no_policy": {
+      "attack_type": "SPOOFING_NO_POLICY",
+      "probability": "CRITICAL",
+      "scenario_name": "Direct Email Spoofing - No SPF or DMARC",
+      "conditions_met": [
+        "No SPF record published",
+        "{dmarc_condition}",
+        "No mechanism to authenticate sending sources"
+      ],
+      "description_template": "The domain '{domain}' publishes neither an SPF record nor an enforcing DMARC policy. Any attacker can send an email with 'From: anyone@{domain}' from any mail server in the world and it will be accepted by most receiving MTAs. There is no technical barrier whatsoever to impersonating this domain.",
+      "remediation": "Immediately publish an SPF record (e.g. 'v=spf1 -all' if no mail is sent from this domain) and a DMARC policy with p=reject. Configure DKIM signing for all legitimate outbound mail flows.",
+      "vectors": [
+        {
+          "vector_type": "smtp_server",
+          "auth_mode": "none",
+          "status": "CONFIRMED",
+          "steps": "1. Use any SMTP server or tool (e.g. swaks, Telnet, Python smtplib).\n2. Set From: ceo@{domain}.\n3. Send to target recipient.\n4. No SPF reject, no DMARC reject. Message delivered."
+        }
+      ]
+    },
+
+    "spf_issue": {
+      "attack_type": "SPOOFING_AUTH_MISCONFIG",
+      "probability": "HIGH",
+      "scenario_name": "Email Spoofing - Critical SPF Misconfiguration",
+      "conditions_met_prefix": [
+        "{dmarc_condition}",
+        "SPF record has {issue_count} critical/high severity issue(s)"
+      ],
+      "description_template": "The domain '{domain}' has critical SPF misconfigurations combined with {dmarc_condition_lower}. The SPF record either allows too many IP ranges, has syntax errors, or includes dangerous third-party infrastructure. This significantly increases the attack surface for email spoofing.",
+      "remediation": "Review and tighten the SPF record. Remove unnecessary includes and overly broad IP ranges. Implement DMARC with p=quarantine or p=reject. Use SPF -all (hard fail) instead of ~all (soft fail).",
+      "vectors": [
+        {
+          "vector_type": "smtp_server",
+          "auth_mode": "none",
+          "status": "UNVERIFIED"
+        }
+      ]
+    },
+
+    "domain_takeover": {
+      "attack_type": "SPOOFING_DOMAIN_TAKEOVER",
+      "_comment": "One scenario per audited domain, built by AttackScenarioAnalyzer._analyze_domain_takeover() from the *_cname_target_(potentially_)unregistered and spf_domain_(potentially_)unregistered issues. One condition + one vector per vulnerable DNS name. Likelihood: confirmed=high, potentially=medium; DMARC-only takeover one notch lower when SPF ends in -all. Impact is always critical; risk = risk_matrix[impact][likelihood].",
+      "weak_spf_codes": [
+        "spf_pass",
+        "spf_neutral",
+        "spf_softfail",
+        "spf_no_all",
+        "no_spf",
+        "domain_not_exist"
+      ],
+      "scenario_name": "Unregistered domain takeover — buy {reg_domains} to control {controls} of {domain}",
+      "scenario_name_potential": "Possible unregistered domain takeover — {reg_domains} may be buyable ({controls} of {domain})",
+      "state_labels": {
+        "unregistered": "appears UNREGISTERED",
+        "potentially_unregistered": "may be UNREGISTERED (no NS, WHOIS/RDAP inconclusive)"
+      },
+      "description_template": "DNS names that '{domain}' relies on for email authentication point to domains that anyone may be able to buy: {reg_domains}. Whoever registers them publishes the records of their choice at those names and therefore controls {controls_long}. {impact_sentence} Registration status comes from public sources (NS / RDAP / WHOIS / registrar): takeover is NOT confirmed from DNS alone — check availability with the registry/registrar before concluding.",
+      "impact_aligned": "Forged mail 'From: anyone@{domain}' can then obtain an ALIGNED {aligned_via} pass, so DMARC passes even under p=reject.",
+      "impact_dmarc_weak_spf": "The attacker sets the DMARC policy of '{domain}' to p=none; with a weak or absent SPF nothing then blocks forged mail.",
+      "impact_dmarc_strong_spf": "The attacker sets the DMARC policy of '{domain}' to p=none; forged mail still hard-fails SPF (-all), so receivers that reject on SPF fail alone block it, the others deliver it.",
+      "footer_condition": "Takeover NOT confirmed from DNS alone — check availability with the registry/registrar first",
+      "kinds": {
+        "spf_cname": {
+          "bypasses": [
+            "SPF"
+          ],
+          "control": "SPF",
+          "bypass_note": "SPF (CNAME at {name}): whoever registers '{reg_domain}' publishes at the CNAME target an SPF authorizing their server -> SPF passes aligned for {domain} -> DMARC then passes as a consequence of SPF alignment, even at p=reject.",
+          "control_long": "the SPF policy of {domain} (the domain itself is an alias)",
+          "condition": "{name} itself is a CNAME ({chain}) whose target does not exist (NXDOMAIN); its registrable domain '{reg_domain}' {state_label} [{reason}] -> buy it and publish an SPF authorizing the attacker's servers",
+          "vector_description": "SPF takeover via the CNAME at {name} -> {reg_domain}",
+          "steps": "1. Confirm with the registry/registrar that '{reg_domain}' is available.\n2. Register '{reg_domain}' and publish 'v=spf1 ip4:<attacker-ip> -all' at '{target}'.\n3. Send from <attacker-ip> with MAIL FROM and From on {domain}.\n4. SPF passes through the CNAME and aligns -> DMARC pass.",
+          "remediation": "Remove the CNAME at {name} (or point it to a target you control) and publish SPF/DMARC directly."
+        },
+        "spf_include": {
+          "bypasses": [
+            "SPF"
+          ],
+          "control": "SPF",
+          "bypass_note": "SPF (include:{include}): whoever registers '{reg_domain}' publishes an SPF at '{include}' authorizing their server -> the SPF of {domain} passes aligned -> DMARC then passes as a consequence of SPF alignment, even at p=reject.",
+          "control_long": "part of the SPF evaluation of {domain} (include:{include})",
+          "condition": "The SPF of {domain} contains 'include:{include}'; the included domain '{reg_domain}' {state_label} [{reason}] -> buy it and publish an SPF authorizing the attacker's servers",
+          "vector_description": "SPF takeover via include:{include} -> {reg_domain}",
+          "steps": "1. Confirm with the registry/registrar that '{reg_domain}' is available.\n2. Register '{reg_domain}' and publish 'v=spf1 ip4:<attacker-ip> -all' at '{include}'.\n3. Send from <attacker-ip> with MAIL FROM and From on {domain}.\n4. The SPF of {domain} evaluates the include -> pass, aligned -> DMARC pass.",
+          "remediation": "Remove 'include:{include}' from the SPF record of {domain}."
+        },
+        "dkim_cname": {
+          "bypasses": [
+            "DKIM"
+          ],
+          "control": "DKIM",
+          "bypass_note": "DKIM (selector(s) {selectors}): whoever registers '{reg_domain}' publishes their own public key -> signatures d={domain} pass aligned -> DMARC then passes as a consequence of DKIM alignment, even at p=reject.",
+          "control_long": "the DKIM key of selector(s) {selectors}",
+          "condition": "DKIM selector(s) {selectors} ({names}) are a CNAME ({chain}) whose target does not exist (NXDOMAIN); its registrable domain '{reg_domain}' {state_label} [{reason}] -> buy it and publish an attacker DKIM key",
+          "vector_description": "DKIM key takeover via selector(s) {selectors} -> {reg_domain}",
+          "steps": "1. Confirm with the registry/registrar that '{reg_domain}' is available.\n2. Register '{reg_domain}' and publish 'v=DKIM1; k=rsa; p=<attacker-public-key>' at '{target}'.\n3. Sign a forged email From: <ceo@{domain}> with d={domain} and s={first_selector}.\n4. DKIM verifies through the CNAME and aligns -> DMARC pass, even under p=reject.",
+          "remediation": "Delete the obsolete CNAME at {names} (or point it to a target you control)."
+        },
+        "dmarc_cname": {
+          "bypasses": [
+            "DMARC"
+          ],
+          "control": "DMARC",
+          "bypass_note": "DMARC only (_dmarc.{domain}): whoever registers '{reg_domain}' publishes p=none, so DMARC stops blocking; SPF and DKIM still fail for forged mail ({spf_state}).",
+          "control_long": "the DMARC policy of {domain}",
+          "condition": "_dmarc.{domain} is a CNAME ({chain}) whose target does not exist (NXDOMAIN); its registrable domain '{reg_domain}' {state_label} [{reason}] -> buy it and publish 'v=DMARC1; p=none' ({spf_state})",
+          "vector_description": "DMARC policy takeover via _dmarc.{domain} -> {reg_domain}",
+          "steps": "1. Confirm with the registry/registrar that '{reg_domain}' is available.\n2. Register '{reg_domain}' and publish 'v=DMARC1; p=none' at '{target}'.\n3. Send From: <ceo@{domain}> from any server.\n4. DMARC evaluates to p=none -> no enforcement; delivery then depends on SPF ({spf_state}).",
+          "remediation": "Remove the obsolete CNAME at _dmarc.{domain} and publish the DMARC record directly (p=reject)."
+        }
+      }
+    },
+
+    "spf_qualifier_rules": [
+      {
+        "rule_id": "SPF_PASS_ALL",
+        "attack_type": "SPOOFING_AUTH_MISCONFIG",
+        "probability": "CRITICAL",
+        "bypasses": ["SPF", "DMARC"],
+        "bypass_notes": [
+          "SPF: +all makes SPF pass for any IP: the attacker's own server sets the MAIL FROM to {domain} and SPF passes aligned.",
+          "DMARC: passes through SPF alignment, even at p=reject.",
+          "DKIM: not needed (DMARC already passes through SPF)."
+        ],
+        "condition_issue_codes": [
+          {"result_key": "spf", "code": "spf_pass"}
+        ],
+        "scenario_name": "SPF Pass All (+all) — DMARC bypass via forced alignment",
+        "conditions_met": [
+          "SPF record ends with +all (every server on the internet is authorized to send)",
+          "Setting MAIL FROM = From = {domain} yields an SPF pass AND alignment -> DMARC passes on the SPF branch",
+          "Works from ANY attacker server and even under p=reject — no weak DMARC or third-party service required"
+        ],
+        "description_template": "The domain '{domain}' publishes an SPF record ending with +all, authorizing every mail server on the internet. Because +all makes SPF pass for ANY sending IP, an attacker who sets both the envelope MAIL FROM and the header From to '{domain}' gets an SPF pass AND SPF alignment — so DMARC passes on the SPF branch. This bypasses DMARC entirely, EVEN with p=reject: the forged mail is delivered with a passing DMARC. +all is functionally equivalent to no SPF and defeats DMARC's SPF alignment for the whole domain.",
+        "remediation": "Replace +all with -all (Hard Fail) immediately. Restrict sending to explicitly authorized servers; +all cannot coexist with meaningful DMARC.",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "status": "CONFIRMED",
+            "impact": "critical",
+            "likelihood": "high",
+            "steps": "1. Use any SMTP server/tool (swaks / Python smtplib) from any IP.\n2. Set MAIL FROM: <anything@{domain}> AND From: <ceo@{domain}> (both on the victim domain).\n3. Send to the target.\n4. SPF check: +all -> pass for your IP.\n5. SPF aligns (MAIL FROM domain = From domain = {domain}).\n6. DMARC passes on the SPF branch -> delivered, even under p=reject."
+          }
+        ]
+      },
+      {
+        "rule_id": "SPF_NEUTRAL_ALL",
+        "attack_type": "SPOOFING_AUTH_MISCONFIG",
+        "probability": "HIGH",
+        "bypasses": ["SPF"],
+        "bypass_notes": [
+          "SPF: ?all returns neutral for any sender: SPF gives no protection.",
+          "DMARC: not bypassed: neutral is not a pass, so an enforced DMARC still blocks the spoof; it lands when DMARC is absent or p=none."
+        ],
+        "condition_issue_codes": [
+          {"result_key": "spf", "code": "spf_neutral"}
+        ],
+        "scenario_name": "SPF Neutral All (?all) — SPF provides no protection",
+        "conditions_met": [
+          "SPF record ends with ?all — SPF returns 'neutral' for every sender (no assertion)",
+          "SPF does not push back on any forged sender; most receivers treat neutral like no SPF",
+          "Note: neutral is NOT an SPF 'pass', so it does not force DMARC alignment by itself — a strict DMARC with aligned DKIM can still block; hence a MEDIUM likelihood"
+        ],
+        "description_template": "The domain '{domain}' publishes an SPF record ending with ?all. SPF then returns 'neutral' for any sender — explicitly 'no opinion', which most receivers treat like having no SPF at all, so a forged From: is not blocked by SPF. Unlike +all, neutral does not produce an SPF 'pass', so it does not force DMARC alignment on its own; the reliable spoof still needs DMARC to be weak/absent (or DKIM forgeable) — hence a medium likelihood but a critical impact when it lands.",
+        "remediation": "Replace ?all with -all (Hard Fail). ?all offers no protection and is treated like a missing SPF record by most receivers.",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "status": "CONFIRMED",
+            "impact": "critical",
+            "likelihood": "medium",
+            "steps": "1. Use any SMTP server/tool from any IP.\n2. Set From: <ceo@{domain}>.\n3. Send to the target.\n4. SPF check: ?all -> neutral (treated like no SPF).\n5. Delivery succeeds where DMARC is weak/absent or the receiver treats neutral leniently."
+          }
+        ]
+      },
+      {
+        "rule_id": "DKIM_RSA_WEAK_KEY",
+        "attack_type": "SPOOFING_DKIM_MISCONFIG",
+        "probability": "MEDIUM",
+        "bypasses": ["DKIM", "DMARC"],
+        "bypass_notes": [
+          "DKIM: the RSA key under 1024 bits can be factored: the attacker signs as d={domain} and DKIM passes aligned — but only where the verifier still accepts such a short key (see the reality check below).",
+          "DMARC: passes through DKIM alignment, even at p=reject — only on receivers that validate the sub-1024-bit signature.",
+          "SPF: not needed (DMARC passes through DKIM), and not available to help the attacker here.",
+          "Reality check: per RFC 8301, verifiers treat RSA keys < 1024 bits as INVALID. Gmail (and, likely, other large providers) ignores a signature made with such a key, so the forged signature does NOT validate there -> DKIM does not pass -> DMARC fails (no aligned SPF) -> the spoof is caught at p=quarantine/reject. The attack lands only on lenient / legacy receivers that still accept sub-1024-bit keys."
+        ],
+        "condition_issue_codes": [
+          {"result_key": "dkim", "code": "dkim_rsa_weak_key"}
+        ],
+        "scenario_name": "Weak DKIM RSA key (<1024 bits) — factor it, sign, align DMARC via DKIM",
+        "conditions_met": [
+          "A published DKIM RSA public key is < 1024 bits",
+          "Such a short RSA modulus can be factored on commodity hardware (e.g. CADO-NFS) to recover the private key",
+          "The attacker then signs as d={domain} -> DKIM passes AND aligns -> DMARC passes even under p=reject, regardless of SPF, ON A VERIFIER THAT STILL ACCEPTS THE SHORT KEY",
+          "Reality check: per RFC 8301 a verifier treats an RSA key < 1024 bits as INVALID. Gmail (and, probably, other large providers) ignores a signature made with such a key: the forged signature does NOT validate, so DKIM does not pass, DMARC fails (no aligned SPF) and the spoof is rejected at p=quarantine/reject. The attack therefore succeeds only against lenient / legacy receivers — hence a MEDIUM likelihood, not high"
+        ],
+        "description_template": "The domain '{domain}' publishes a DKIM RSA public key smaller than 1024 bits. A key that short can be factored with off-the-shelf tools such as CADO-NFS, recovering the private key. The attacker can then sign a forged message with a VALID DKIM signature carrying d={domain}. Where the signature is accepted it is valid AND aligned with the From, so DMARC passes on the DKIM branch — bypassing DMARC entirely, EVEN under p=reject and regardless of SPF. REALITY CHECK: per RFC 8301 a conformant verifier treats an RSA key under 1024 bits as INVALID. Gmail — and, in all likelihood, other large providers — simply ignores a signature made with such a key, so the forged signature does NOT validate there: DKIM does not pass, DMARC fails (there is no aligned SPF to fall back on) and the spoof is caught at p=quarantine/reject. The attack only lands on lenient or legacy receivers that still accept sub-1024-bit keys, which is why its likelihood is MEDIUM rather than high. The weak key must still be rotated: it is an unambiguous misconfiguration and a liability.",
+        "remediation": "Immediately rotate the DKIM selector to a 2048-bit RSA key (1024 minimum, 2048 recommended) and revoke the weak key. Publish the new public key and re-sign outbound mail.",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "impact": "critical",
+            "likelihood": "medium",
+            "port": "25",
+            "transport": "server_to_server",
+            "steps": "1. Fetch the weak DKIM public key from DNS (<selector>._domainkey.{domain}).\n2. Factor the RSA modulus with CADO-NFS -> recover the private key.\n3. Craft a forged email From: <ceo@{domain}> and DKIM-sign it with d={domain} using the recovered key.\n4. Send directly to the recipient's MX on port 25 (server-to-server).\n5. On a verifier that accepts the short key, DKIM verifies (valid signature) and aligns with the From -> DMARC passes on the DKIM branch -> delivered, even under p=reject. The signature is cryptographic: it travels with the message regardless of the sending channel. NOTE: an RFC 8301 verifier such as Gmail treats the sub-1024-bit key as invalid and ignores the signature -> DKIM does not pass -> the spoof is caught."
+          },
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "account",
+            "impact": "critical",
+            "likelihood": "medium",
+            "port": "587/465",
+            "transport": "client_to_server",
+            "steps": "1. Recover the private key by factoring the weak RSA modulus (CADO-NFS).\n2. Craft From: <ceo@{domain}> and DKIM-sign it with d={domain} using the recovered key.\n3. Submit through any authenticated relay / provider you have an account on (submission 587/465, client-to-server).\n4. On a verifier that accepts the short key, the forged message carries a VALID, ALIGNED DKIM signature -> DMARC passes on the DKIM branch even under p=reject, independently of the relay's own SPF/DKIM. On an RFC 8301 verifier (Gmail, ...) the sub-1024-bit signature is ignored and the spoof is caught."
+          },
+          {
+            "vector_type": "local_script",
+            "auth_mode": "none",
+            "impact": "critical",
+            "likelihood": "medium",
+            "transport": "local_submission",
+            "steps": "1. Recover the private key by factoring the weak RSA modulus (CADO-NFS).\n2. Generate the forged message From: <ceo@{domain}> and attach a DKIM-Signature d={domain} built with the recovered key (e.g. in a local script / PHP mail()/PHPMailer handing a pre-signed message to the host's local MTA).\n3. The local MTA submits it without SMTP auth.\n4. On a verifier that accepts the short key, the valid, aligned DKIM signature makes DMARC pass on the DKIM branch, even under p=reject. On an RFC 8301 verifier (Gmail, ...) the sub-1024-bit signature is ignored and the spoof is caught."
+          }
+        ]
+      },
+      {
+        "rule_id": "SPF_SOFTFAIL_NO_DMARC",
+        "attack_type": "SPOOFING_AUTH_MISCONFIG",
+        "probability": "MEDIUM",
+        "condition_issue_codes": [
+          {"result_key": "spf",   "code": "spf_softfail"},
+          {"result_key": "dmarc", "code": "no_dmarc"}
+        ],
+        "scenario_name": "SPF SoftFail (~all) — No DMARC",
+        "conditions_met": [
+          "SPF record ends with ~all (unauthorized senders marked suspicious but not rejected)",
+          "No DMARC record published",
+          "Receiving servers apply their own local policy — many deliver SoftFail messages"
+        ],
+        "description_template": "The domain '{domain}' publishes an SPF record ending with ~all. SoftFail instructs receiving servers to mark unauthorized senders as suspicious but does not require rejection. Without a DMARC policy, receiving servers apply inconsistent local policies and spoofed emails are frequently delivered, particularly by lenient mail providers.",
+        "remediation": "Replace ~all with -all (Hard Fail). Publish a DMARC policy with p=quarantine or p=reject to enforce consistent rejection of unauthorized senders.",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "status": "UNVERIFIED",
+            "steps": "1. Use any SMTP server or tool (swaks / telnet).\n2. Set From: <ceo@{domain}>.\n3. Send to target recipient.\n4. SPF check: ~all — SoftFail. Message tagged but not rejected.\n5. No DMARC policy to enforce action. Delivery depends on receiving server local policy — many accept SoftFail."
+          }
+        ]
+      },
+      {
+        "rule_id": "SPF_SOFTFAIL_LAX_DMARC",
+        "attack_type": "SPOOFING_AUTH_MISCONFIG",
+        "probability": "MEDIUM",
+        "condition_issue_codes": [
+          {"result_key": "spf",   "code": "spf_softfail"},
+          {"result_key": "dmarc", "code": "dmarc_lax_policy"}
+        ],
+        "scenario_name": "SPF SoftFail (~all) — DMARC Monitoring Only",
+        "conditions_met": [
+          "SPF record ends with ~all (unauthorized senders marked suspicious but not rejected)",
+          "DMARC policy is p=none (monitoring only — no enforcement)",
+          "Combination provides no reliable protection against spoofing"
+        ],
+        "description_template": "The domain '{domain}' publishes an SPF record ending with ~all marking unauthorized senders as suspicious without blocking them. The DMARC p=none policy provides monitoring via aggregate reports but applies no enforcement on receiving servers. The combination means spoofed emails may be delivered depending on the receiving server local policy.",
+        "remediation": "Replace ~all with -all (Hard Fail). Upgrade DMARC from p=none to p=quarantine or p=reject to enforce policy-based rejection of unauthorized senders.",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "status": "UNVERIFIED",
+            "steps": "1. Use any SMTP server or tool (swaks / telnet).\n2. Set From: <ceo@{domain}>.\n3. Send to target recipient.\n4. SPF check: ~all — SoftFail. Message tagged.\n5. DMARC check: p=none — no enforcement. Delivery depends on receiving server local policy."
+          }
+        ]
+      }
+    ]
+  },
+
+  "open_relay": {
+    "_comment": "Open relay: evaluated per audited domain, then merged per (MX host, case). Impact / probability per case (_relay_profile): spf_pass critical / very_high; spf_fail_not_enforced high / high; spf_fail_enforced critical / low; spf_unknown critical / medium. The case depends on whether the domain's SPF authorizes the relay IP and on the DMARC state (see AttackScenarioAnalyzer._analyze_open_relay). Bypasses: certain ones in 'bypasses', config-dependent ones in 'conditional_bypasses', explanations in 'bypass_notes' (spf_line / dkim_line / dmarc_line). DKIM is always conditional: the relay test never sends content.",
+    "attack_category": "EXTERNAL",
+    "attack_type": "OPEN_RELAY",
+    "probability": "CRITICAL",
+    "scenario_name": "SMTP Open Relay on {mx_host} ({relay_case_label})",
+    "conditions_met": [
+      "MX host '{mx_host}' accepted RCPT TO for an external recipient without authentication",
+      "{assessment}"
+    ],
+    "description_template": "The MX server '{mx_host}' is an SMTP open relay: it accepted RCPT TO for an external domain without requiring authentication. An attacker can connect to it and relay arbitrary mail, with any From address of the domains it serves ({domain}), to any recipient in the world. Being the domain's MX does not by itself make this server an authorized sender: external receivers check the SPF of the MAIL FROM against the relay IP. {assessment} Mail to the mailboxes hosted on this server itself does not need the relay at all; it is only protected by the server's own inbound SPF/DMARC checks (not tested here). Whatever the spoofing outcome, an open relay is abused for spam at scale and gets the server blacklisted.",
+    "remediation": "Immediately restrict relaying on {mx_host}. Configure SMTP to only relay mail for authenticated users or for your own domain's recipients (inbound relay). Check Postfix: 'mynetworks', 'relay_domains', 'smtpd_relay_restrictions'. For Exim: check 'relay_to_domains'. Test with 'swaks --to external@domain.com --server {mx_host}' to confirm the fix. An open relay will be quickly abused by spammers and will result in IP blacklisting.",
+    "cases": {
+      "spf_pass": {
+        "relay_case_label": "SPF-authorized relay: direct SPF/DMARC bypass",
+        "assessment": "The relay IP {relay_ip} is authorized by the domain's SPF: spoofed mail relayed by this server passes SPF aligned, hence DMARC, even at p=reject. It is indistinguishable from the domain's legitimate mail.",
+        "spf_line": "SPF: PASS. The relay IP {relay_ip} is authorized by the domain's SPF and the attacker sets the MAIL FROM to the domain: SPF passes aligned.",
+        "dmarc_line": "DMARC: PASS through SPF alignment, whatever the policy (even p=reject).",
+        "dmarc_line_absent": "DMARC: absent, nothing to bypass (SPF passes anyway)."
+      },
+      "spf_fail_enforced": {
+        "relay_case_label": "relay not in the domain's SPF, DMARC enforced",
+        "assessment": "The relay IP {relay_ip} is NOT authorized by the domain's SPF and DMARC is enforced: for external recipients the spoof is quarantined or rejected, unless the relay DKIM-signs relayed mail with the domain's key (see Bypass Conditions).",
+        "spf_line": "SPF: FAIL. The relay IP {relay_ip} is not authorized by the domain's SPF: with a MAIL FROM in the domain, SPF fails. (With an attacker-owned MAIL FROM domain whose SPF authorizes {relay_ip}, SPF passes, but for that other domain: not aligned.)",
+        "dmarc_line": "DMARC (p=quarantine / p=reject): passes only through an aligned DKIM signature added by the relay; otherwise the spoof is quarantined or rejected."
+      },
+      "spf_fail_not_enforced": {
+        "relay_case_label": "relay not in the domain's SPF, DMARC not enforced",
+        "assessment": "The relay IP {relay_ip} is NOT authorized by the domain's SPF, but DMARC does not block the spoof (p=none or no record). The relay adds a legitimate mail server IP (reputation) and possibly an aligned DKIM signature.",
+        "spf_line": "SPF: FAIL. The relay IP {relay_ip} is not authorized by the domain's SPF: with a MAIL FROM in the domain, SPF fails. (With an attacker-owned MAIL FROM domain whose SPF authorizes {relay_ip}, SPF passes, but for that other domain: not aligned.)",
+        "dmarc_line": "DMARC: p=none, not enforced: a failing spoof is not blocked by DMARC; an aligned DKIM signature added by the relay would even make it pass.",
+        "dmarc_line_absent": "DMARC: absent, nothing to bypass."
+      },
+      "spf_unknown": {
+        "relay_case_label": "SPF authorization of the relay undetermined",
+        "assessment": "Whether the relay IP {relay_ip} is authorized by the domain's SPF could not be determined (unresolved a / mx / exists / ptr mechanisms, or unknown IP). If it is, spoofed mail passes SPF aligned and DMARC: check it manually.",
+        "spf_line": "SPF: UNDETERMINED. The relay IP {relay_ip} could not be matched against the domain's SPF: if it is authorized, SPF passes aligned.",
+        "dmarc_line": "DMARC: passes if SPF passes, otherwise only through an aligned DKIM signature added by the relay.",
+        "dmarc_line_absent": "DMARC: absent, nothing to bypass."
+      }
+    },
+    "spf_none_line": "SPF: NONE. The domain publishes no SPF record: SPF gives no pass for it.",
+    "dkim_line": "DKIM (possible, not testable): the relayed mail carries an aligned d=<domain> signature only if the relay's DKIM signer signs it, e.g. OpenDKIM with the attacker's source address in InternalHosts (too broad a range such as 0.0.0.0/0), mail re-injected through 127.0.0.1 after a content filter (amavis), or a signer that signs every message whose From matches its SigningTable whatever its source. The open relay test never sends content, so this is not observed: relay a test message to a mailbox you control to confirm.",
+    "vectors": [
+      {
+        "vector_type": "smtp_server",
+        "impact": "critical",
+        "likelihood": "very_high",
+        "auth_mode": "none",
+        "port": "25",
+        "transport": "server_to_server",
+        "status": "CONFIRMED",
+        "steps": "1. Connect: nc {mx_host} 25 (or telnet/swaks).\n2. EHLO attacker.com.\n3. MAIL FROM: <ceo@DOMAIN> (DOMAIN = any domain served by this MX: {domain}).\n4. RCPT TO: <victim@target.com>.\n5. DATA: compose the phishing email (From: ceo@DOMAIN).\n6. End with '.'. The message is relayed from {relay_ip}.\n7. The receiver checks SPF of DOMAIN against {relay_ip}: {relay_case_label}.\n8. If the relay DKIM-signs relayed mail with the DOMAIN key, DKIM (and DMARC) pass whatever SPF says.",
+        "probability_note": "Probability per case: SPF-authorized relay very_high; relay not in SPF with DMARC not enforced high; relay not in SPF with DMARC enforced low (needs the relay to DKIM-sign); undetermined medium. The open relay test stops after RCPT TO (mode rcpt) or after a 354 reply to DATA (mode data) and never sends any content."
+      }
+    ]
+  }
+}

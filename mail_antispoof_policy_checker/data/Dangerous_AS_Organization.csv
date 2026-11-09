@@ -1,0 +1,4 @@
+include;service_type;service_name;dangerous
+SENDGRID;Email Delivery Service;SendGrid;Yes
+Sendinblue;Email Delivery Service;Brevo;Yes
+Mailjet;Email Delivery Service;Mailjet;Yes

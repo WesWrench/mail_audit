@@ -1,0 +1,14 @@
+{
+  "service": "OVH",
+  "technique": "shared_hosting_local_mta",
+  "date": "2026-10-30",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": {
+    "vector_type": "local_script",
+    "transport": "local_submission"
+  },
+  "probability": "LOW",
+  "note": "Still blocked (supersedes 2026-08-03). OVH enforces access control on the MAIL FROM / Sender over its shared infrastructure: a forged From on the hosted domain via the local MTA is rejected.",
+  "source": "Internal test 2026-10-30 (ovh.example.com)"
+}

@@ -1,0 +1,28 @@
+{
+  "service": "AlwaysData",
+  "technique": "shared_hosting_shared_smtp",
+  "date": "2026-10-30",
+  "result": "pass",
+  "effect": "confirm",
+  "vector": {
+    "vector_type": "smtp_server",
+    "shared": true,
+    "port": "587/465",
+    "transport": "client_to_server"
+  },
+  "probability": "CRITICAL",
+  "note": "Works via the Shared Mail Server too: create an AlwaysData mailbox and authenticate on smtp-<username>.alwaysdata.net (SMTP AUTH, e.g. Python smtplib or PHPMailer), then send with a forged From on the hosted domain. MAIL FROM is aligned with the hosted/victim domain (in SPF), so DMARC passes on the SPF branch even under p=reject. Same DKIM behaviour as the Local MTA (signed d=alwaysdata.net s=default, valid, not aligned -> avoids an R_DKIM_NA penalty, DMARC via SPF). Measured 2026-10-30: DMARC PASSES via SPF alignment even at p=reject (Rspamd DMARC_POLICY_ALLOW [example.com,reject], R_SPF_ALLOW, R_DKIM_ALLOW [alwaysdata.net:s=default]), and the spoof is delivered to the Gmail INBOX (not spam).",
+  "observations": [
+    {
+      "filter": "Rspamd",
+      "verdict": "no action -> inbox",
+      "symbols": "DMARC_POLICY_ALLOW(-1) [example.com,reject] R_DKIM_ALLOW(-1) [alwaysdata.net:s=default] R_SPF_ALLOW(-1) [+ip4:188.72.70.0/24] ONCE_RECEIVED(0.2) MIME_GOOD(-0.1) [text/plain]"
+    },
+    {
+      "filter": "Gmail",
+      "verdict": "inbox",
+      "symbols": "delivered to the inbox"
+    }
+  ],
+  "source": "Internal test 2026-10-30 (alwaysdata.example.com, authenticated smtp-<user>.alwaysdata.net)"
+}

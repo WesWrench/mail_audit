@@ -1,0 +1,8711 @@
+{
+  "_generated": "2026-03-15",
+  "_probe_label": "kfdsjfdklkjfdsdsqjlkjsqiqdhjqkdjdskkjq",
+  "_description": "Per-endpoint RDAP availability signals. For each RDAP hostname, 'available_when' is a list of conditions (ALL must match) that identify a 'domain not found / available' response. Field is a JSON-path list into the response body, or the special strings 'http_status' (HTTP status code) or 'body_empty' (bool, true when body has no RDAP content). If a path traverses a list, the condition matches if ANY element satisfies op+value.",
+  "_no_rdap_tlds": [
+    "ae",
+    "af",
+    "al",
+    "am",
+    "ao",
+    "aq",
+    "arpa",
+    "at",
+    "aw",
+    "ax",
+    "az",
+    "ba",
+    "bb",
+    "be",
+    "bf",
+    "bg",
+    "bh",
+    "bi",
+    "bj",
+    "bn",
+    "bo",
+    "bs",
+    "bt",
+    "bv",
+    "bw",
+    "by",
+    "cd",
+    "cf",
+    "cg",
+    "ci",
+    "cl",
+    "cn",
+    "cu",
+    "cw",
+    "cy",
+    "dj",
+    "dk",
+    "dm",
+    "do",
+    "dunlop",
+    "dz",
+    "edu",
+    "ee",
+    "eg",
+    "es",
+    "et",
+    "eu",
+    "ga",
+    "gb",
+    "ge",
+    "gf",
+    "gg",
+    "gh",
+    "gi",
+    "gm",
+    "gn",
+    "goo",
+    "gp",
+    "gq",
+    "gr",
+    "gt",
+    "gu",
+    "gw",
+    "hk",
+    "hm",
+    "hotel",
+    "hr",
+    "hu",
+    "ie",
+    "il",
+    "im",
+    "iq",
+    "ir",
+    "it",
+    "je",
+    "jo",
+    "jp",
+    "kg",
+    "ki",
+    "km",
+    "kn",
+    "kp",
+    "kr",
+    "kw",
+    "kz",
+    "la",
+    "lk",
+    "lr",
+    "ls",
+    "lt",
+    "lu",
+    "lv",
+    "ma",
+    "mc",
+    "md",
+    "merck",
+    "mg",
+    "mh",
+    "mil",
+    "mk",
+    "mo",
+    "mp",
+    "mq",
+    "mr",
+    "mt",
+    "mv",
+    "mw",
+    "mx",
+    "my",
+    "mz",
+    "nc",
+    "ne",
+    "ng",
+    "ni",
+    "nr",
+    "nu",
+    "nz",
+    "om",
+    "onion",
+    "pa",
+    "pe",
+    "pf",
+    "ph",
+    "pk",
+    "ps",
+    "pt",
+    "py",
+    "qa",
+    "ro",
+    "rs",
+    "ru",
+    "sa",
+    "sb",
+    "se",
+    "sj",
+    "sk",
+    "sl",
+    "sm",
+    "so",
+    "st",
+    "su",
+    "sv",
+    "sx",
+    "sy",
+    "sz",
+    "tc",
+    "td",
+    "tg",
+    "tj",
+    "tk",
+    "tl",
+    "tm",
+    "tn",
+    "tr",
+    "tt",
+    "ug",
+    "uy",
+    "va",
+    "ve",
+    "vermögensberater",
+    "vermögensberatung",
+    "vn",
+    "vu",
+    "wolterskluwer",
+    "ws",
+    "zw",
+    "ελ",
+    "ευ",
+    "бг",
+    "бел",
+    "дети",
+    "ею",
+    "католик",
+    "ком",
+    "мкд",
+    "мон",
+    "москва",
+    "онлайн",
+    "орг",
+    "рус",
+    "рф",
+    "сайт",
+    "срб",
+    "укр",
+    "қаз",
+    "հայ",
+    "ישראל",
+    "קום",
+    "ابوظبي",
+    "ارامكو",
+    "الاردن",
+    "البحرين",
+    "الجزائر",
+    "السعودية",
+    "السعوديه",
+    "السعودیة",
+    "السعودیۃ",
+    "العليان",
+    "المغرب",
+    "اليمن",
+    "امارات",
+    "ايران",
+    "ایران",
+    "بارت",
+    "بازار",
+    "بيتك",
+    "بھارت",
+    "تونس",
+    "سودان",
+    "سوريا",
+    "سورية",
+    "شبكة",
+    "عراق",
+    "عرب",
+    "عمان",
+    "فلسطين",
+    "قطر",
+    "كاثوليك",
+    "كوم",
+    "مصر",
+    "مليسيا",
+    "موريتانيا",
+    "موقع",
+    "همراه",
+    "پاكستان",
+    "پاکستان",
+    "ڀارت",
+    "कॉम",
+    "नेट",
+    "भारत",
+    "भारतम्",
+    "भारोत",
+    "संगठन",
+    "বাংলা",
+    "ভারত",
+    "ভাৰত",
+    "ਭਾਰਤ",
+    "ભારત",
+    "ଭାରତ",
+    "இந்தியா",
+    "இலங்கை",
+    "சிங்கப்பூர்",
+    "భారత్",
+    "ಭಾರತ",
+    "ഭാരതം",
+    "ලංකා",
+    "คอม",
+    "ไทย",
+    "ລາວ",
+    "გე",
+    "みんな",
+    "アマゾン",
+    "クラウド",
+    "グーグル",
+    "コム",
+    "ストア",
+    "セール",
+    "ファッション",
+    "ポイント",
+    "世界",
+    "中信",
+    "中国",
+    "中國",
+    "中文网",
+    "亚马逊",
+    "企业",
+    "佛山",
+    "信息",
+    "健康",
+    "八卦",
+    "公司",
+    "公益",
+    "台湾",
+    "台灣",
+    "商城",
+    "商店",
+    "商标",
+    "嘉里",
+    "嘉里大酒店",
+    "在线",
+    "大拿",
+    "天主教",
+    "娱乐",
+    "家電",
+    "广东",
+    "微博",
+    "慈善",
+    "我爱你",
+    "手机",
+    "招聘",
+    "政务",
+    "政府",
+    "新加坡",
+    "新闻",
+    "时尚",
+    "書籍",
+    "机构",
+    "淡马锡",
+    "游戏",
+    "澳門",
+    "澳门",
+    "点看",
+    "移动",
+    "组织机构",
+    "网址",
+    "网店",
+    "网站",
+    "网络",
+    "联通",
+    "臺灣",
+    "谷歌",
+    "购物",
+    "通販",
+    "集团",
+    "電訊盈科",
+    "飞利浦",
+    "食品",
+    "餐厅",
+    "香格里拉",
+    "香港",
+    "닷넷",
+    "닷컴",
+    "삼성",
+    "한국"
+  ],
+  "_error_tlds": [
+    "alstom",
+    "bauhaus",
+    "bayern",
+    "call",
+    "cat",
+    "cr",
+    "cx",
+    "erni",
+    "eurovision",
+    "eus",
+    "fj",
+    "gs",
+    "gy",
+    "ht",
+    "man",
+    "mtr",
+    "nf",
+    "pin",
+    "prime",
+    "radio",
+    "read",
+    "scot",
+    "sport",
+    "sr",
+    "virgin"
+  ],
+  "endpoints": {
+    "ccrdap.twnic.tw": {
+      "tlds": [
+        "tw"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "keetmans.omadhina.co.na": {
+      "tlds": [
+        "na"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "nic.samsung": {
+      "tlds": [
+        "samsung"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "404"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "The request does not appear to be a valid RDAP URI. I might need more arguments than that."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode=='404' AND title=='Object not found' AND description contains 'The request does not appear to be a valid RDAP URI. I might need more arguments than that.'"
+    },
+    "pubapi.registry.google": {
+      "tlds": [
+        "ads",
+        "android",
+        "app",
+        "boo",
+        "cal",
+        "channel",
+        "chrome",
+        "dad",
+        "day",
+        "dclk",
+        "dev",
+        "docs",
+        "drive",
+        "eat",
+        "esq",
+        "fly",
+        "foo",
+        "gbiz",
+        "gle",
+        "gmail",
+        "goog",
+        "google",
+        "guge",
+        "hangout",
+        "here",
+        "how",
+        "ing",
+        "map",
+        "meet",
+        "meme",
+        "mov",
+        "new",
+        "nexus",
+        "page",
+        "phd",
+        "play",
+        "prod",
+        "prof",
+        "rsvp",
+        "search",
+        "soy",
+        "youtube",
+        "zip"
+      ],
+      "tld_count": 43,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found'"
+    },
+    "rdap.blog.fury.ca": {
+      "tlds": [
+        "blog"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.ca.fury.ca": {
+      "tlds": [
+        "ca"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.cctld.au": {
+      "tlds": [
+        "au"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.cctld.uz": {
+      "tlds": [
+        "uz"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'Domain not found'"
+    },
+    "rdap.centralnic.com": {
+      "tlds": [
+        "allfinanz",
+        "art",
+        "audio",
+        "auto",
+        "autos",
+        "baby",
+        "beauty",
+        "best",
+        "bmw",
+        "boats",
+        "bond",
+        "box",
+        "build",
+        "cam",
+        "car",
+        "cars",
+        "case",
+        "ceo",
+        "cfd",
+        "christmas",
+        "college",
+        "cyou",
+        "dealer",
+        "deloitte",
+        "dhl",
+        "diet",
+        "dvag",
+        "fans",
+        "flowers",
+        "fm",
+        "fo",
+        "fresenius",
+        "frl",
+        "fun",
+        "game",
+        "gd",
+        "gent",
+        "gl",
+        "guitars",
+        "hair",
+        "help",
+        "homes",
+        "host",
+        "hosting",
+        "icu",
+        "inc",
+        "kfh",
+        "kpn",
+        "kred",
+        "lat",
+        "lidl",
+        "llp",
+        "lol",
+        "london",
+        "lpl",
+        "lplfinancial",
+        "luxury",
+        "makeup",
+        "mini",
+        "mom",
+        "monster",
+        "motorcycles",
+        "nokia",
+        "online",
+        "ooo",
+        "pics",
+        "pohl",
+        "press",
+        "protection",
+        "pw",
+        "qpon",
+        "quest",
+        "reit",
+        "rent",
+        "ruhr",
+        "saarland",
+        "sbs",
+        "schwarz",
+        "security",
+        "sfr",
+        "site",
+        "skin",
+        "smart",
+        "space",
+        "stc",
+        "stcgroup",
+        "storage",
+        "store",
+        "tech",
+        "theatre",
+        "tickets",
+        "tui",
+        "uno",
+        "vg",
+        "viva",
+        "website",
+        "wme",
+        "xyz",
+        "yachts",
+        "zuerich"
+      ],
+      "tld_count": 100,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "objectClassName"
+          ],
+          "op": "eq",
+          "value": "error"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "objectClassName_error",
+      "http_status": 404,
+      "description": "http_status==404 AND objectClassName=='error' AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.centralnicregistry.com": {
+      "tlds": [
+        "jnj"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "objectClassName"
+          ],
+          "op": "eq",
+          "value": "error"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "objectClassName_error",
+      "http_status": 404,
+      "description": "http_status==404 AND objectClassName=='error' AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.crown.fury.ca": {
+      "tlds": [
+        "crown"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.denic.de": {
+      "tlds": [
+        "de"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "No such domain."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='No such domain.'"
+    },
+    "rdap.dns.pl": {
+      "tlds": [
+        "pl"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Error processing request"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Error processing request' AND description contains 'Not found'"
+    },
+    "rdap.eco.fury.ca": {
+      "tlds": [
+        "eco"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.fi": {
+      "tlds": [
+        "fi"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "http_404_only",
+      "http_status": 404,
+      "description": "http_status==404"
+    },
+    "rdap.flexireg.net": {
+      "tlds": [
+        "moscow"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "404"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode=='404' AND title=='domain not found' AND description contains 'domain not found'"
+    },
+    "rdap.gmoregistry.net": {
+      "tlds": [
+        "bridgestone",
+        "brother",
+        "canon",
+        "datsun",
+        "dnp",
+        "epson",
+        "firestone",
+        "fujitsu",
+        "ggee",
+        "gmo",
+        "goldpoint",
+        "hisamitsu",
+        "hitachi",
+        "honda",
+        "hyundai",
+        "infiniti",
+        "jcb",
+        "kddi",
+        "kia",
+        "komatsu",
+        "kyoto",
+        "lexus",
+        "lotte",
+        "mitsubishi",
+        "nagoya",
+        "nec",
+        "nhk",
+        "nico",
+        "nissan",
+        "okinawa",
+        "otsuka",
+        "panasonic",
+        "playstation",
+        "ricoh",
+        "ryukyu",
+        "sharp",
+        "shop",
+        "softbank",
+        "sony",
+        "suzuki",
+        "tokyo",
+        "toray",
+        "toshiba",
+        "toyota",
+        "yodobashi",
+        "yokohama"
+      ],
+      "tld_count": 46,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Error in processing request"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Error in processing request'"
+    },
+    "rdap.gtlds.nic.br": {
+      "tlds": [
+        "bom",
+        "final",
+        "globo",
+        "rio",
+        "uol"
+      ],
+      "tld_count": 5,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "code:404"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Object not found' AND description contains 'code:404'"
+    },
+    "rdap.hostmaster.ua": {
+      "tlds": [
+        "ua"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'Not Found'"
+    },
+    "rdap.iana.org": {
+      "tlds": [
+        "int"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found :"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'Domain not found :'"
+    },
+    "rdap.identitydigital.services": {
+      "tlds": [
+        "abb",
+        "abbott",
+        "abc",
+        "ac",
+        "academy",
+        "accenture",
+        "accountants",
+        "actor",
+        "aeg",
+        "aero",
+        "ag",
+        "agakhan",
+        "agency",
+        "ai",
+        "airbus",
+        "airforce",
+        "akdn",
+        "alibaba",
+        "alipay",
+        "allstate",
+        "aol",
+        "apartments",
+        "archi",
+        "army",
+        "arte",
+        "asda",
+        "asia",
+        "associates",
+        "attorney",
+        "auction",
+        "audi",
+        "band",
+        "barclaycard",
+        "barclays",
+        "barefoot",
+        "bargains",
+        "bbt",
+        "bcg",
+        "beats",
+        "bestbuy",
+        "bet",
+        "bike",
+        "bingo",
+        "bio",
+        "black",
+        "bloomberg",
+        "blue",
+        "bm",
+        "bms",
+        "bnpparibas",
+        "boehringer",
+        "bofa",
+        "bosch",
+        "boutique",
+        "bradesco",
+        "broker",
+        "builders",
+        "business",
+        "bz",
+        "cab",
+        "cafe",
+        "camera",
+        "camp",
+        "capital",
+        "cards",
+        "care",
+        "careers",
+        "cash",
+        "casino",
+        "catering",
+        "center",
+        "cern",
+        "cfa",
+        "chanel",
+        "chat",
+        "cheap",
+        "church",
+        "cipriani",
+        "citadel",
+        "city",
+        "claims",
+        "cleaning",
+        "clinic",
+        "clinique",
+        "clothing",
+        "clubmed",
+        "coach",
+        "codes",
+        "coffee",
+        "community",
+        "company",
+        "computer",
+        "condos",
+        "construction",
+        "consulting",
+        "contact",
+        "contractors",
+        "cool",
+        "coupon",
+        "coupons",
+        "credit",
+        "creditcard",
+        "crs",
+        "cruise",
+        "cruises",
+        "dance",
+        "dating",
+        "deals",
+        "degree",
+        "delivery",
+        "delta",
+        "democrat",
+        "dental",
+        "dentist",
+        "diamonds",
+        "digital",
+        "direct",
+        "directory",
+        "discount",
+        "discover",
+        "doctor",
+        "dog",
+        "domains",
+        "edeka",
+        "education",
+        "email",
+        "emerck",
+        "energy",
+        "engineer",
+        "engineering",
+        "enterprises",
+        "equipment",
+        "ericsson",
+        "estate",
+        "events",
+        "exchange",
+        "expert",
+        "exposed",
+        "express",
+        "extraspace",
+        "fage",
+        "fail",
+        "family",
+        "fan",
+        "farm",
+        "fedex",
+        "ferrari",
+        "fidelity",
+        "fido",
+        "finance",
+        "financial",
+        "fish",
+        "fitness",
+        "flights",
+        "florist",
+        "football",
+        "forex",
+        "forsale",
+        "frogans",
+        "fund",
+        "furniture",
+        "futbol",
+        "fyi",
+        "gallery",
+        "gallo",
+        "gallup",
+        "games",
+        "genting",
+        "gifts",
+        "glass",
+        "global",
+        "gmbh",
+        "gold",
+        "golf",
+        "goodyear",
+        "graphics",
+        "gratis",
+        "green",
+        "gripe",
+        "group",
+        "guide",
+        "guru",
+        "haus",
+        "hdfc",
+        "hdfcbank",
+        "healthcare",
+        "helsinki",
+        "hermes",
+        "hkt",
+        "hockey",
+        "holdings",
+        "holiday",
+        "homedepot",
+        "hospital",
+        "house",
+        "hughes",
+        "ice",
+        "imamat",
+        "immo",
+        "immobilien",
+        "industries",
+        "info",
+        "institute",
+        "insure",
+        "international",
+        "investments",
+        "io",
+        "irish",
+        "ismaili",
+        "ist",
+        "istanbul",
+        "itv",
+        "jaguar",
+        "java",
+        "jeep",
+        "jetzt",
+        "jewelry",
+        "jio",
+        "jll",
+        "juegos",
+        "juniper",
+        "kaufen",
+        "kerryhotels",
+        "kerryproperties",
+        "kids",
+        "kim",
+        "kitchen",
+        "kosher",
+        "kuokgroup",
+        "lamborghini",
+        "lamer",
+        "land",
+        "landrover",
+        "lasalle",
+        "lawyer",
+        "lc",
+        "lds",
+        "lease",
+        "lefrak",
+        "legal",
+        "lego",
+        "lgbt",
+        "life",
+        "lighting",
+        "limited",
+        "limo",
+        "live",
+        "llc",
+        "loans",
+        "lotto",
+        "ltd",
+        "ltda",
+        "lundbeck",
+        "maif",
+        "maison",
+        "management",
+        "market",
+        "marketing",
+        "markets",
+        "marriott",
+        "mba",
+        "mckinsey",
+        "me",
+        "media",
+        "memorial",
+        "mit",
+        "mn",
+        "mobi",
+        "moda",
+        "money",
+        "mormon",
+        "mortgage",
+        "movie",
+        "mu",
+        "nab",
+        "navy",
+        "network",
+        "news",
+        "next",
+        "nextdirect",
+        "nikon",
+        "ninja",
+        "nissay",
+        "nowtv",
+        "nra",
+        "obi",
+        "onl",
+        "oracle",
+        "orange",
+        "organic",
+        "origins",
+        "partners",
+        "parts",
+        "pccw",
+        "pet",
+        "photography",
+        "photos",
+        "pictet",
+        "pictures",
+        "pink",
+        "pizza",
+        "place",
+        "plumbing",
+        "plus",
+        "pnc",
+        "poker",
+        "post",
+        "pr",
+        "pro",
+        "productions",
+        "progressive",
+        "promo",
+        "properties",
+        "pub",
+        "pwc",
+        "recipes",
+        "red",
+        "redumbrella",
+        "rehab",
+        "reise",
+        "reisen",
+        "reliance",
+        "rentals",
+        "repair",
+        "report",
+        "republican",
+        "restaurant",
+        "reviews",
+        "rexroth",
+        "rich",
+        "richardli",
+        "ril",
+        "rip",
+        "rocks",
+        "rogers",
+        "run",
+        "rwe",
+        "sale",
+        "salon",
+        "sanofi",
+        "sarl",
+        "saxo",
+        "sbi",
+        "sc",
+        "scholarships",
+        "school",
+        "schule",
+        "sener",
+        "services",
+        "sew",
+        "sh",
+        "shangrila",
+        "shiksha",
+        "shoes",
+        "shopping",
+        "show",
+        "sina",
+        "singles",
+        "ski",
+        "soccer",
+        "social",
+        "software",
+        "solar",
+        "solutions",
+        "song",
+        "spa",
+        "srl",
+        "stada",
+        "star",
+        "statebank",
+        "stockholm",
+        "studio",
+        "style",
+        "supplies",
+        "supply",
+        "support",
+        "surgery",
+        "systems",
+        "taobao",
+        "tatamotors",
+        "tax",
+        "taxi",
+        "team",
+        "technology",
+        "temasek",
+        "tennis",
+        "thd",
+        "theater",
+        "tiaa",
+        "tienda",
+        "tips",
+        "tires",
+        "tmall",
+        "today",
+        "tools",
+        "tours",
+        "town",
+        "toys",
+        "trading",
+        "training",
+        "travel",
+        "travelers",
+        "travelersinsurance",
+        "trv",
+        "tvs",
+        "ubank",
+        "ubs",
+        "university",
+        "ups",
+        "vacations",
+        "vanguard",
+        "vc",
+        "vegas",
+        "ventures",
+        "vet",
+        "viajes",
+        "video",
+        "vig",
+        "viking",
+        "villas",
+        "vin",
+        "visa",
+        "vision",
+        "volvo",
+        "vote",
+        "voto",
+        "voyage",
+        "watch",
+        "watches",
+        "weber",
+        "weibo",
+        "weir",
+        "wine",
+        "works",
+        "world",
+        "wtf",
+        "xin",
+        "yahoo",
+        "zara",
+        "zero",
+        "zone"
+      ],
+      "tld_count": 441,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.isnic.is": {
+      "tlds": [
+        "is"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='not found'"
+    },
+    "rdap.kenic.or.ke": {
+      "tlds": [
+        "ke"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.kiwi.fury.ca": {
+      "tlds": [
+        "kiwi"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.mls.fury.ca": {
+      "tlds": [
+        "mls"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.mobile-registry.com": {
+      "tlds": [
+        "blockbuster",
+        "data",
+        "dish",
+        "dot",
+        "dtv",
+        "dvr",
+        "latino",
+        "mobile",
+        "ollo",
+        "ott",
+        "phone",
+        "sling"
+      ],
+      "tld_count": 12,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.nic.aaa": {
+      "tlds": [
+        "aaa"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.aarp": {
+      "tlds": [
+        "aarp"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.able": {
+      "tlds": [
+        "able"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.abogado": {
+      "tlds": [
+        "abogado"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.abudhabi": {
+      "tlds": [
+        "abudhabi"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.accountant": {
+      "tlds": [
+        "accountant"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.aco": {
+      "tlds": [
+        "aco"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.ad": {
+      "tlds": [
+        "ad"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.adult": {
+      "tlds": [
+        "adult"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.aetna": {
+      "tlds": [
+        "aetna"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.afl": {
+      "tlds": [
+        "afl"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.africa": {
+      "tlds": [
+        "africa"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "standard_ec_only",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404"
+    },
+    "rdap.nic.aig": {
+      "tlds": [
+        "aig"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.airtel": {
+      "tlds": [
+        "airtel"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ally": {
+      "tlds": [
+        "ally"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.alsace": {
+      "tlds": [
+        "alsace"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.americanexpress": {
+      "tlds": [
+        "americanexpress"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.americanfamily": {
+      "tlds": [
+        "americanfamily"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.amex": {
+      "tlds": [
+        "amex"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.amfam": {
+      "tlds": [
+        "amfam"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.amica": {
+      "tlds": [
+        "amica"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.amsterdam": {
+      "tlds": [
+        "amsterdam"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "status"
+          ],
+          "op": "contains",
+          "value": "free"
+        }
+      ],
+      "schema": "sidn_status_free",
+      "http_status": 404,
+      "description": "status contains 'free'"
+    },
+    "rdap.nic.analytics": {
+      "tlds": [
+        "analytics"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.anz": {
+      "tlds": [
+        "anz"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.apple": {
+      "tlds": [
+        "apple"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.aquarelle": {
+      "tlds": [
+        "aquarelle"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "objectClassName"
+          ],
+          "op": "eq",
+          "value": "error"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "objectClassName_error",
+      "http_status": 404,
+      "description": "http_status==404 AND objectClassName=='error' AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.nic.arab": {
+      "tlds": [
+        "arab"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.aramco": {
+      "tlds": [
+        "aramco"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.as": {
+      "tlds": [
+        "as"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.athleta": {
+      "tlds": [
+        "athleta"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.auspost": {
+      "tlds": [
+        "auspost"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.axa": {
+      "tlds": [
+        "axa"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.banamex": {
+      "tlds": [
+        "banamex"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.bank": {
+      "tlds": [
+        "bank"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.barcelona": {
+      "tlds": [
+        "barcelona"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.baseball": {
+      "tlds": [
+        "baseball"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.basketball": {
+      "tlds": [
+        "basketball"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.bcn": {
+      "tlds": [
+        "bcn"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.beer": {
+      "tlds": [
+        "beer"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.berlin": {
+      "tlds": [
+        "berlin"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.bharti": {
+      "tlds": [
+        "bharti"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.bible": {
+      "tlds": [
+        "bible"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.bid": {
+      "tlds": [
+        "bid"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.biz": {
+      "tlds": [
+        "biz"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.blackfriday": {
+      "tlds": [
+        "blackfriday"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.booking": {
+      "tlds": [
+        "booking"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.bostik": {
+      "tlds": [
+        "bostik"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.boston": {
+      "tlds": [
+        "boston"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.brussels": {
+      "tlds": [
+        "brussels"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^Domain\\ \\S+\\ not\\ found$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^Domain\\\\ \\\\S+\\\\ not\\\\ found$'"
+    },
+    "rdap.nic.buzz": {
+      "tlds": [
+        "buzz"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.bzh": {
+      "tlds": [
+        "bzh"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.calvinklein": {
+      "tlds": [
+        "calvinklein"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.capetown": {
+      "tlds": [
+        "capetown"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "standard_ec_only",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404"
+    },
+    "rdap.nic.capitalone": {
+      "tlds": [
+        "capitalone"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.caravan": {
+      "tlds": [
+        "caravan"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.casa": {
+      "tlds": [
+        "casa"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.catholic": {
+      "tlds": [
+        "catholic"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cba": {
+      "tlds": [
+        "cba"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cbn": {
+      "tlds": [
+        "cbn"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cbre": {
+      "tlds": [
+        "cbre"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ch": {
+      "tlds": [
+        "ch"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.chase": {
+      "tlds": [
+        "chase"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.chintai": {
+      "tlds": [
+        "chintai"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cisco": {
+      "tlds": [
+        "cisco"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.citi": {
+      "tlds": [
+        "citi"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.club": {
+      "tlds": [
+        "club"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cm": {
+      "tlds": [
+        "cm"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.commbank": {
+      "tlds": [
+        "commbank"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.compare": {
+      "tlds": [
+        "compare"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cooking": {
+      "tlds": [
+        "cooking"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.corsica": {
+      "tlds": [
+        "corsica"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.courses": {
+      "tlds": [
+        "courses"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cpa": {
+      "tlds": [
+        "cpa"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cricket": {
+      "tlds": [
+        "cricket"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cuisinella": {
+      "tlds": [
+        "cuisinella"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.cv": {
+      "tlds": [
+        "cv"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.cz": {
+      "tlds": [
+        "cz"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.date": {
+      "tlds": [
+        "date"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.dds": {
+      "tlds": [
+        "dds"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.dell": {
+      "tlds": [
+        "dell"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.design": {
+      "tlds": [
+        "design"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.download": {
+      "tlds": [
+        "download"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.dubai": {
+      "tlds": [
+        "dubai"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.dupont": {
+      "tlds": [
+        "dupont"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.durban": {
+      "tlds": [
+        "durban"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "standard_ec_only",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404"
+    },
+    "rdap.nic.earth": {
+      "tlds": [
+        "earth"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.faith": {
+      "tlds": [
+        "faith"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.farmers": {
+      "tlds": [
+        "farmers"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.fashion": {
+      "tlds": [
+        "fashion"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ferrero": {
+      "tlds": [
+        "ferrero"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.film": {
+      "tlds": [
+        "film"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.firmdale": {
+      "tlds": [
+        "firmdale"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "404"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode=='404' AND title=='Object not found' AND description contains 'Not Found'"
+    },
+    "rdap.nic.fishing": {
+      "tlds": [
+        "fishing"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.fit": {
+      "tlds": [
+        "fit"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.flickr": {
+      "tlds": [
+        "flickr"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.flir": {
+      "tlds": [
+        "flir"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ford": {
+      "tlds": [
+        "ford"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.fox": {
+      "tlds": [
+        "fox"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.fr": {
+      "tlds": [
+        "fr"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.frontier": {
+      "tlds": [
+        "frontier"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ftr": {
+      "tlds": [
+        "ftr"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.gal": {
+      "tlds": [
+        "gal"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.gap": {
+      "tlds": [
+        "gap"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.garden": {
+      "tlds": [
+        "garden"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.gay": {
+      "tlds": [
+        "gay"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.gdn": {
+      "tlds": [
+        "gdn"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "404"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode=='404' AND title=='Object not found'"
+    },
+    "rdap.nic.gea": {
+      "tlds": [
+        "gea"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.george": {
+      "tlds": [
+        "george"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.gmx": {
+      "tlds": [
+        "gmx"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.godaddy": {
+      "tlds": [
+        "godaddy"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.gov": {
+      "tlds": [
+        "gov"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found'"
+    },
+    "rdap.nic.grainger": {
+      "tlds": [
+        "grainger"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.grocery": {
+      "tlds": [
+        "grocery"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.hamburg": {
+      "tlds": [
+        "hamburg"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.hbo": {
+      "tlds": [
+        "hbo"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.health": {
+      "tlds": [
+        "health"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.hn": {
+      "tlds": [
+        "hn"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.homegoods": {
+      "tlds": [
+        "homegoods"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.homesense": {
+      "tlds": [
+        "homesense"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.horse": {
+      "tlds": [
+        "horse"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.hotels": {
+      "tlds": [
+        "hotels"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.hsbc": {
+      "tlds": [
+        "hsbc"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.hyatt": {
+      "tlds": [
+        "hyatt"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ibm": {
+      "tlds": [
+        "ibm"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ifm": {
+      "tlds": [
+        "ifm"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.ikano": {
+      "tlds": [
+        "ikano"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.ink": {
+      "tlds": [
+        "ink"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.insurance": {
+      "tlds": [
+        "insurance"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.intuit": {
+      "tlds": [
+        "intuit"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.ipiranga": {
+      "tlds": [
+        "ipiranga"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.itau": {
+      "tlds": [
+        "itau"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.jmp": {
+      "tlds": [
+        "jmp"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.joburg": {
+      "tlds": [
+        "joburg"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "standard_ec_only",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404"
+    },
+    "rdap.nic.jpmorgan": {
+      "tlds": [
+        "jpmorgan"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.jprs": {
+      "tlds": [
+        "jprs"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found for the lookup/search URL."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'No data found for the lookup/search URL.'"
+    },
+    "rdap.nic.kpmg": {
+      "tlds": [
+        "kpmg"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.krd": {
+      "tlds": [
+        "krd"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'No data found'"
+    },
+    "rdap.nic.lacaixa": {
+      "tlds": [
+        "lacaixa"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.leclerc": {
+      "tlds": [
+        "leclerc"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.li": {
+      "tlds": [
+        "li"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.locker": {
+      "tlds": [
+        "locker"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.nic.ly": {
+      "tlds": [
+        "ly"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.madrid": {
+      "tlds": [
+        "madrid"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.mango": {
+      "tlds": [
+        "mango"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.ml": {
+      "tlds": [
+        "ml"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.mma": {
+      "tlds": [
+        "mma"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.ms": {
+      "tlds": [
+        "ms"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.museum": {
+      "tlds": [
+        "museum"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.nrw": {
+      "tlds": [
+        "nrw"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.ntt": {
+      "tlds": [
+        "ntt"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found for the lookup/search URL."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'No data found for the lookup/search URL.'"
+    },
+    "rdap.nic.ovh": {
+      "tlds": [
+        "ovh"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.paris": {
+      "tlds": [
+        "paris"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.pm": {
+      "tlds": [
+        "pm"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.politie": {
+      "tlds": [
+        "politie"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "status"
+          ],
+          "op": "contains",
+          "value": "free"
+        }
+      ],
+      "schema": "sidn_status_free",
+      "http_status": 404,
+      "description": "status contains 'free'"
+    },
+    "rdap.nic.quebec": {
+      "tlds": [
+        "quebec"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.re": {
+      "tlds": [
+        "re"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.sakura": {
+      "tlds": [
+        "sakura"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "No data found for the lookup/search URL."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'No data found for the lookup/search URL.'"
+    },
+    "rdap.nic.sap": {
+      "tlds": [
+        "sap"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.scb": {
+      "tlds": [
+        "scb"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'Not Found'"
+    },
+    "rdap.nic.schaeffler": {
+      "tlds": [
+        "schaeffler"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.sd": {
+      "tlds": [
+        "sd"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.seat": {
+      "tlds": [
+        "seat"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.sncf": {
+      "tlds": [
+        "sncf"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.ss": {
+      "tlds": [
+        "ss"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.swiss": {
+      "tlds": [
+        "swiss"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.tel": {
+      "tlds": [
+        "tel"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.tf": {
+      "tlds": [
+        "tf"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.total": {
+      "tlds": [
+        "total"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.tube": {
+      "tlds": [
+        "tube"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.versicherung": {
+      "tlds": [
+        "versicherung"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.nic.vi": {
+      "tlds": [
+        "vi"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nic.vlaanderen": {
+      "tlds": [
+        "vlaanderen"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^Domain\\ \\S+\\ not\\ found$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^Domain\\\\ \\\\S+\\\\ not\\\\ found$'"
+    },
+    "rdap.nic.wf": {
+      "tlds": [
+        "wf"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.whoswho": {
+      "tlds": [
+        "whoswho"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'domain not found'"
+    },
+    "rdap.nic.yandex": {
+      "tlds": [
+        "yandex"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.nic.yt": {
+      "tlds": [
+        "yt"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "errors",
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": "NOT_FOUND_DOMAIN_NAME_WITH_NAME"
+        },
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "afnic_errors_array",
+      "http_status": 404,
+      "description": "errors.errorCode=='NOT_FOUND_DOMAIN_NAME_WITH_NAME' AND http_status==404"
+    },
+    "rdap.nic.zm": {
+      "tlds": [
+        "zm"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.nixiregistry.in": {
+      "tlds": [
+        "in"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.nominet.uk": {
+      "tlds": [
+        "abbvie",
+        "amazon",
+        "audible",
+        "author",
+        "aws",
+        "azure",
+        "bbc",
+        "bbva",
+        "bing",
+        "book",
+        "bot",
+        "broadway",
+        "buy",
+        "career",
+        "circle",
+        "cymru",
+        "deal",
+        "desi",
+        "fairwinds",
+        "fast",
+        "fire",
+        "free",
+        "gop",
+        "got",
+        "gucci",
+        "hot",
+        "hotmail",
+        "ieee",
+        "imdb",
+        "jobs",
+        "jot",
+        "joy",
+        "kindle",
+        "like",
+        "locus",
+        "med",
+        "microsoft",
+        "moi",
+        "mtn",
+        "now",
+        "nowruz",
+        "office",
+        "omega",
+        "pars",
+        "pay",
+        "pharmacy",
+        "pioneer",
+        "pn",
+        "realestate",
+        "realtor",
+        "room",
+        "safe",
+        "save",
+        "secure",
+        "shell",
+        "shia",
+        "silk",
+        "sky",
+        "skype",
+        "smile",
+        "spot",
+        "swatch",
+        "talk",
+        "tci",
+        "tunes",
+        "tushu",
+        "uk",
+        "wales",
+        "wanggou",
+        "wed",
+        "windows",
+        "wow",
+        "xbox",
+        "yamaxun",
+        "you",
+        "zappos"
+      ],
+      "tld_count": 76,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^Domain\\ \\S+\\ not\\ found$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^Domain\\\\ \\\\S+\\\\ not\\\\ found$'"
+    },
+    "rdap.norid.no": {
+      "tlds": [
+        "no"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain is not registered"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not found' AND description contains 'Domain is not registered'"
+    },
+    "rdap.pandi.id": {
+      "tlds": [
+        "id"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'Domain Not Found'"
+    },
+    "rdap.publicinterestregistry.org": {
+      "tlds": [
+        "charity",
+        "foundation",
+        "gives",
+        "giving",
+        "ngo",
+        "ong",
+        "org"
+      ],
+      "tld_count": 7,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.register.si": {
+      "tlds": [
+        "si"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^Domain\\ '\\S+'\\ not\\ found$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= \"(?i)^Domain\\\\ '\\\\S+'\\\\ not\\\\ found$\""
+    },
+    "rdap.registro.br": {
+      "tlds": [
+        "br"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.registry.bar": {
+      "tlds": [
+        "bar",
+        "rest"
+      ],
+      "tld_count": 2,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.registry.click": {
+      "tlds": [
+        "feedback",
+        "forum",
+        "observer",
+        "pid",
+        "realty"
+      ],
+      "tld_count": 5,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.registry.cloud": {
+      "tlds": [
+        "cloud"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.registry.co": {
+      "tlds": [
+        "co"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "objectClassName"
+          ],
+          "op": "eq",
+          "value": "error"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "objectClassName_error",
+      "http_status": 404,
+      "description": "http_status==404 AND objectClassName=='error' AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "rdap.registry.coop": {
+      "tlds": [
+        "coop",
+        "creditunion"
+      ],
+      "tld_count": 2,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.registry.ec": {
+      "tlds": [
+        "ec"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.registry.hiphop": {
+      "tlds": [
+        "hiphop"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.registry.love": {
+      "tlds": [
+        "love"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.registryservices.music": {
+      "tlds": [
+        "music"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.ricta.org.rw": {
+      "tlds": [
+        "rw"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "regex",
+          "value": "(?i)^No\\ results\\ for\\ query\\ \\S+$"
+        }
+      ],
+      "schema": "standard_ec_title_regex",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title ~= '(?i)^No\\\\ results\\\\ for\\\\ query\\\\ \\\\S+$'"
+    },
+    "rdap.ryce-rsp.com": {
+      "tlds": [
+        "cologne",
+        "koeln",
+        "tirol",
+        "wien"
+      ],
+      "tld_count": 4,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        }
+      ],
+      "schema": "standard_ec_only",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404"
+    },
+    "rdap.sgnic.sg": {
+      "tlds": [
+        "sg"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Domain not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Domain not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Domain not found' AND description contains 'Domain not found'"
+    },
+    "rdap.sidn.nl": {
+      "tlds": [
+        "nl"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "status"
+          ],
+          "op": "contains",
+          "value": "free"
+        }
+      ],
+      "schema": "sidn_status_free",
+      "http_status": 404,
+      "description": "status contains 'free'"
+    },
+    "rdap.teleinfo.cn": {
+      "tlds": [
+        "anquan",
+        "shouji",
+        "xihuan",
+        "yun"
+      ],
+      "tld_count": 4,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "404 not found."
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "The object not find."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='404 not found.' AND description contains 'The object not find.'"
+    },
+    "rdap.thains.co.th": {
+      "tlds": [
+        "th"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Not Found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'Not Found'"
+    },
+    "rdap.tonicregistry.to": {
+      "tlds": [
+        "to"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.tucowsregistry.net": {
+      "tlds": [
+        "click",
+        "country",
+        "diy",
+        "food",
+        "gift",
+        "hiv",
+        "lifestyle",
+        "link",
+        "living",
+        "property",
+        "sexy",
+        "trust",
+        "vana"
+      ],
+      "tld_count": 13,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "rdap.verisign.com": {
+      "tlds": [
+        "com",
+        "net"
+      ],
+      "tld_count": 2,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "rdap.y.net.ye": {
+      "tlds": [
+        "ye"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Not Found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "The requested domain was not found in the RDAP database."
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Not Found' AND description contains 'The requested domain was not found in the RDAP database.'"
+    },
+    "rdap.zdnsgtld.com": {
+      "tlds": [
+        "baidu",
+        "citic",
+        "icbc",
+        "ren",
+        "sohu",
+        "top",
+        "unicom",
+        "wang"
+      ],
+      "tld_count": 8,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "objectClassName"
+          ],
+          "op": "eq",
+          "value": "error"
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        },
+        {
+          "field": [
+            "description"
+          ],
+          "op": "contains",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "objectClassName_error",
+      "http_status": 404,
+      "description": "http_status==404 AND objectClassName=='error' AND title=='Object not found' AND description contains 'Object not found'"
+    },
+    "tld-rdap.verisign.com": {
+      "tlds": [
+        "cc",
+        "comsec",
+        "name",
+        "verisign"
+      ],
+      "tld_count": 4,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    },
+    "whois.kyregistry.ky": {
+      "tlds": [
+        "ky"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": [
+            "description"
+          ],
+          "op": "regex",
+          "value": "(?i)is available for registration"
+        }
+      ],
+      "schema": "description_available",
+      "http_status": 404,
+      "description": "description ~= '(?i)is available for registration'"
+    },
+    "whois.nic.tatar": {
+      "tlds": [
+        "tatar"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "errorCode"
+          ],
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": [
+            "title"
+          ],
+          "op": "eq",
+          "value": "Object not found"
+        }
+      ],
+      "schema": "standard_ec_title_exact",
+      "http_status": 404,
+      "description": "http_status==404 AND errorCode==404 AND title=='Object not found'"
+    },
+    "whois.tznic.or.tz": {
+      "tlds": [
+        "tz"
+      ],
+      "tld_count": 1,
+      "available_when": [
+        {
+          "field": "http_status",
+          "op": "eq",
+          "value": 404
+        },
+        {
+          "field": "body_empty",
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "schema": "empty_404",
+      "http_status": 404,
+      "description": "http_status==404 AND body_empty==True"
+    }
+  }
+}

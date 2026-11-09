@@ -1,0 +1,9 @@
+{
+  "service": "OVH",
+  "technique": "shared_hosting_mail_from_control",
+  "date": "2026-08-03",
+  "result": "fail",
+  "effect": "downgrade",
+  "probability": "LOW",
+  "note": "OVH now verifies the MAIL FROM / Sender field and blocks the spoofed message. The shared-hosting bypass no longer works on this infrastructure."
+}

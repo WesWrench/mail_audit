@@ -1,0 +1,12 @@
+issue_code;issue_title;category;default_severity;description
+smtp_connection_failure;SMTP connection failure;SMTP;high;Could not connect to MX SMTP server on port 25
+smtp_banner_mismatch;SMTP banner mismatch;SMTP;low;SMTP banner hostname does not match the reverse DNS PTR record
+smtp_open_relay;SMTP open relay;SMTP;critical;MX server accepted relay without authentication — open relay detected
+smtp_no_starttls;STARTTLS not advertised;SMTP;high;MX server does not advertise STARTTLS in EHLO capabilities
+tls_cert_invalid;TLS certificate invalid;TLS;high;TLS certificate validation failed (expired, hostname mismatch, or untrusted CA)
+tls_cert_expiring_soon;TLS certificate expiring soon;TLS;medium;TLS certificate expires within 30 days
+smtp_rdns_mismatch;Reverse DNS mismatch;DNS;low;PTR record for MX IP does not match forward DNS hostname
+mta_sts_missing;MTA-STS policy absent or invalid;MTA-STS;high;No valid MTA-STS policy found — STARTTLS is not enforced on this domain
+mta_sts_non_enforce;MTA-STS policy not in enforce mode;MTA-STS;medium;MTA-STS policy exists but mode is not enforce — sending MTAs are not required to use TLS
+dane_no_tlsa;No TLSA (DANE) records for MX host;DANE;medium;No TLSA records published for this MX host — DANE certificate pinning is absent
+tlsa_no_dnssec;TLSA records without DNSSEC;DANE;high;TLSA records exist but DNSSEC is not valid for the MX zone — DANE protection is illusory

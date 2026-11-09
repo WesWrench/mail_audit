@@ -1,0 +1,21 @@
+{
+  "domain": {
+    "de":  ["https://rdap.denic.de/"],
+    "ch":  ["https://rdap.nic.ch/"],
+    "li":  ["https://rdap.nic.li/"],
+    "gl":  ["https://rdap.centralnic.com/gl/"],
+    "ac":  ["https://rdap.identitydigital.services/rdap/"],
+    "ag":  ["https://rdap.identitydigital.services/rdap/"],
+    "bz":  ["https://rdap.identitydigital.services/rdap/"],
+    "io":  ["https://rdap.identitydigital.services/rdap/"],
+    "lc":  ["https://rdap.identitydigital.services/rdap/"],
+    "me":  ["https://rdap.identitydigital.services/rdap/"],
+    "mn":  ["https://rdap.identitydigital.services/rdap/"],
+    "pr":  ["https://rdap.identitydigital.services/rdap/"],
+    "sc":  ["https://rdap.identitydigital.services/rdap/"],
+    "sh":  ["https://rdap.identitydigital.services/rdap/"],
+    "vc":  ["https://rdap.identitydigital.services/rdap/"],
+    "co":  ["https://rdap.registry.co/co/"],
+    "us":  ["https://rdap.nic.us/"]
+  }
+}

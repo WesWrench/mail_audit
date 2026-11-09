@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mail-antispoof-policy-checker"
+version = "2.2.0"
+description = "Mail anti-spoofing policy analysis: SPF, DMARC, and DKIM checking with dangerous configuration detection"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["email", "spf", "dmarc", "dkim", "security", "anti-spoofing", "phishing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Topic :: Communications :: Email",
+    "Topic :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "dnspython>=2.0.0",
+    "checkdmarc>=5.12.0,<6",
+    "certifi>=2024.0.0",
+    "cryptography>=3.0",
+    "pandas>=1.3.0",
+    "openpyxl>=3.0.0",
+    "tldextract>=3.0.0",
+    "requests>=2.25.0",
+    "pytz>=2021.1",
+    "geoip2>=4.0.0",
+    "httpx",
+    "beautifulsoup4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["mail_antispoof_policy_checker", "mail_antispoof_policy_checker.*"]
+
+[tool.setuptools.package-data]
+# Static data files (CSV databases, selectors list) bundled with the package
+"mail_antispoof_policy_checker" = [
+    "data/*.csv",
+    "data/*.txt",
+    "utils/maxmind/**",
+]
+# Also include any files that land in lib/data/ (e.g. generated PTR cache)
+"mail_antispoof_policy_checker.lib.data" = ["*.csv", "*.txt"]

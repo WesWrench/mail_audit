@@ -1,0 +1,10 @@
+{
+  "service": "Mailjet",
+  "technique": "delivery_service_web_ui_domain_verification",
+  "date": "2026-08-06",
+  "result": "fail",
+  "effect": "downgrade",
+  "vector": { "vector_type": "web_ui" },
+  "note": "Mailjet blocks arbitrary-From sending from the web UI: the whole sending domain must first be validated (a unique DNS record OR a temporary file hosted on the domain's website, tied to the API key). You cannot spoof an unverified domain's From from the UI. Blocked (spoofing would need control of the target's DNS or web server).",
+  "source": "https://documentation.mailjet.com/hc/fr/articles/360042561594"
+}

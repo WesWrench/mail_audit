@@ -1,0 +1,11 @@
+# Install all three packages in editable mode (development install).
+# Run from the repo root with the venv activated:
+#
+#   source env/bin/activate          # Linux/WSL
+#   env\Scripts\activate             # Windows CMD
+#
+#   pip install -r requirements.txt
+
+-e ./smtp_checker
+-e ./mail_antispoof_policy_checker
+-e ./mail_audit

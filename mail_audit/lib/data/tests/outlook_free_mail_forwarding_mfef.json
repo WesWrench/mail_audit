@@ -1,0 +1,9 @@
+{
+  "service": "Outlook.com Service",
+  "technique": "free_mail_forwarding_mfef",
+  "date": "2026-08-03",
+  "result": "fail",
+  "effect": "eliminate",
+  "vector": { "vector_type": "email_forwarding" },
+  "note": "MFEF (MAIL FROM Equals FROM) is no longer implemented: Outlook now applies SRS rewriting. The forwarding rule no longer produces DMARC alignment, so this spoofing vector no longer exists. The direct SMTP vector (forged From:) remains valid."
+}

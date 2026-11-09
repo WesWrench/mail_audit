@@ -1,0 +1,91 @@
+{
+  "_comment": "Canonical reference for the vector_type and auth_mode values used in email_services.json and scenario_templates.json attack vectors. NOTE: vector_type is the technical channel of a vector (web_ui, smtp_server, network...) — NOT to be confused with a mail service's service_type (Email Delivery Service, Free Mail Provider, Shared Hosting). DOCUMENTATION ONLY: this file is not loaded at runtime — keep it in sync with the JSON that is (email_services.json, scenario_templates.json) and with models.AttackVector._AUTH_REQUIRED_MODES.",
+
+  "vector_types": {
+    "web_ui": {
+      "description": "Human-operated web interface used to compose or configure email delivery from a browser dashboard."
+    },
+    "http_api": {
+      "description": "Programmatic email submission through the provider's HTTP/REST API (distinct from the human web_ui)."
+    },
+    "smtp_server": {
+      "description": "Email submission through the provider's SMTP endpoint (SMTP AUTH), or an unauthenticated SMTP relay."
+    },
+    "local_script": {
+      "description": "Locally executed script submitting through the local MTA on shared hosting, without external SMTP auth. Examples: PHP mail() (most prevalent), sendmail wrapper, Python smtplib to localhost."
+    },
+    "email_forwarding": {
+      "description": "Provider-side forwarding rule configured through an account or webmail interface."
+    },
+    "network": {
+      "description": "Network-level interception/manipulation of the SMTP connection to the MX (MITM). Service authentication is not the relevant access mechanism."
+    }
+  },
+
+  "auth_modes": {
+    "credentials": {
+      "auth_required": true,
+      "description": "Reusable account credentials, typically a username/email + password (web login or SMTP AUTH LOGIN/PLAIN). The exact SMTP mechanism is intentionally not fixed here."
+    },
+    "api_key": {
+      "auth_required": true,
+      "description": "Provider-issued API key/token used for SMTP AUTH (e.g. apikey:<key>) or the HTTP API."
+    },
+    "app_password": {
+      "auth_required": true,
+      "description": "Application-specific password generated when 2FA is active (Gmail, Yahoo, iCloud, AOL...)."
+    },
+    "oauth_token": {
+      "auth_required": true,
+      "description": "Short-lived or refreshable OAuth access/refresh token authorizing web, API, or SMTP access (Gmail, Microsoft 365...)."
+    },
+    "trusted_local_submission": {
+      "auth_required": false,
+      "description": "Submission authorized implicitly because it originates from a trusted local process or hosting account (PHP mail(), sendmail). Replaces the former 'local_mta' auth_mode."
+    },
+    "none": {
+      "auth_required": false,
+      "description": "The service accepts the operation without authentication — by design or by misconfiguration (e.g. open relay, no-policy direct spoof)."
+    },
+    "not_applicable": {
+      "auth_required": false,
+      "description": "Authentication is not a relevant concept for this vector (e.g. network interception). Replaces the former null auth_mode."
+    }
+  },
+
+  "valid_combinations": {
+    "web_ui":           ["credentials", "oauth_token"],
+    "http_api":         ["api_key", "oauth_token", "credentials"],
+    "smtp_server":      ["credentials", "api_key", "app_password", "oauth_token", "none"],
+    "local_script":     ["trusted_local_submission"],
+    "email_forwarding": ["credentials", "oauth_token"],
+    "network":          ["not_applicable"]
+  },
+
+  "service_context_combinations": {
+    "Email Delivery Service": {
+      "typical": [
+        {"vector_type": "web_ui",      "auth_mode": "credentials"},
+        {"vector_type": "http_api",    "auth_mode": "api_key"},
+        {"vector_type": "smtp_server", "auth_mode": "api_key"}
+      ]
+    },
+    "Free Mail Provider": {
+      "typical": [
+        {"vector_type": "smtp_server",      "auth_mode": "app_password"},
+        {"vector_type": "smtp_server",      "auth_mode": "oauth_token"},
+        {"vector_type": "email_forwarding", "auth_mode": "credentials"}
+      ]
+    },
+    "Shared Hosting": {
+      "typical": [
+        {"vector_type": "smtp_server",  "auth_mode": "credentials"},
+        {"vector_type": "local_script", "auth_mode": "trusted_local_submission"}
+      ],
+      "possible": [
+        {"vector_type": "smtp_server", "auth_mode": "api_key"}
+      ],
+      "_note": "api_key is possible (not typical) for providers exposing token-based SMTP relay (e.g. Infomaniak, some cPanel/Plesk setups)."
+    }
+  }
+}
