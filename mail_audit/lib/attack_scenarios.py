@@ -125,6 +125,7 @@ _ATTACK_TYPE_MAP: Dict[str, AttackType] = {
     "SPOOFING_NO_DMARC_ENFORCEMENT": AttackType.SPOOFING_NO_DMARC_ENFORCEMENT,
     "SPOOFING_AUTH_MISCONFIG": AttackType.SPOOFING_AUTH_MISCONFIG,
     "SPOOFING_DKIM_MISCONFIG": AttackType.SPOOFING_DKIM_MISCONFIG,
+    "SPOOFING_PARTIAL_DMARC": AttackType.SPOOFING_PARTIAL_DMARC,
     "SPOOFING_RELAXED_ALIGNMENT": AttackType.SPOOFING_RELAXED_ALIGNMENT,
     "SPOOFING_DOMAIN_TAKEOVER": AttackType.SPOOFING_DOMAIN_TAKEOVER,
     "OPEN_RELAY":            AttackType.OPEN_RELAY,
@@ -203,12 +204,35 @@ class AttackScenarioAnalyzer:
         scenarios: List[AttackScenario] = []
         scenarios.extend(self._analyze_internal_mitm())
         scenarios.extend(self._analyze_external_spoofing())
+        scenarios.extend(self._analyze_dmarc_pct())
         scenarios.extend(self._analyze_spf_qualifier_rules())
         scenarios.extend(self._analyze_domain_takeover())
         scenarios.extend(self._analyze_open_relay())
         scenarios.extend(self._analyze_relaxed_alignment())
+        self._add_lowered_policy_remediation(scenarios)
         self._assign_risk_and_bypass(scenarios)
         return scenarios
+
+    # Scenarios whose outcome depends on the audited domain's DMARC state
+    _DMARC_STATE_TYPES = frozenset({
+        AttackType.SPOOFING_NO_DMARC_ENFORCEMENT, AttackType.SPOOFING_EMAIL_SERVICE,
+        AttackType.SPOOFING_FREE_EMAIL, AttackType.SPOOFING_AUTH_MISCONFIG,
+    })
+
+    def _add_lowered_policy_remediation(self, scenarios: List[AttackScenario]) -> None:
+        """With t=y / pct=0 the record already says p=quarantine|reject: the fix is to
+        remove what lowers it, not to "publish an enforcing policy"."""
+        lowered_by = self._policy_lowered_by()
+        policy = (self.dmarc_result.get("policy") or "").lower()
+        if not lowered_by or policy not in ("quarantine", "reject"):
+            return
+        fix = "remove t=y" if lowered_by == "t=y" else "set pct=100 (or remove pct)"
+        note = (f"The DMARC record already publishes p={policy}, but {lowered_by} lowers it to "
+                f"p={self._effective_policy(self.dmarc_result)} for every message: {fix} so that "
+                f"p={policy} is actually applied.")
+        for sc in scenarios:
+            if sc.attack_type in self._DMARC_STATE_TYPES and note not in sc.remediation:
+                sc.remediation = f"{note} {sc.remediation}".strip()
 
     # ------------------------------------------------------------------
     # Risk (impact x likelihood) and bypass tagging
@@ -595,9 +619,81 @@ class AttackScenarioAnalyzer:
             return "none", "DMARC policy is 'none' (monitoring only, no enforcement)"
         if self._has_issue("dmarc", "no_dmarc"):
             return "absent", "DMARC record is completely absent"
-        if (self.dmarc_result.get("policy") or "").lower() == "quarantine":
+        policy = (self.dmarc_result.get("policy") or "").lower()
+        lowered_by = self._policy_lowered_by()
+        if lowered_by:
+            # RFC 9989 t=y / RFC 7489 pct=0: the published policy is applied to no message;
+            # every failing message gets the next less strict policy.
+            if policy == "quarantine":
+                return "none", (f"DMARC p=quarantine with {lowered_by}: the policy is applied to no "
+                                "message, failing mail is handled as with p=none")
+            return "quarantine", (f"DMARC p=reject with {lowered_by}: failing mail is "
+                                  "quarantined (sent to spam) instead of rejected")
+        if policy == "quarantine":
             return "quarantine", "DMARC is enforced with p=quarantine (failing mail is sent to spam, not rejected)"
         return "reject", "DMARC is enforced with p=reject (failing mail is rejected)"
+
+    _LOWER_POLICY = {"reject": "quarantine", "quarantine": "none", "none": "none"}
+
+    @staticmethod
+    def _lowered_by(dmarc: Dict[str, Any]) -> Optional[str]:
+        """``"t=y"`` / ``"pct=0"`` when the whole policy of *dmarc* is applied one level
+        lower, else None.
+
+        RFC 7489 §6.6.4: messages not selected by pct get the next less strict policy
+        (reject -> quarantine, quarantine -> none); with pct=0 that is every message.
+        RFC 9989 t=y is its replacement (same meaning for older receivers).
+        """
+        if dmarc.get("testing"):
+            return "t=y"
+        if dmarc.get("percentage") == 0:
+            return "pct=0"
+        return None
+
+    @classmethod
+    def _effective_policy(cls, dmarc: Dict[str, Any]) -> str:
+        """Policy actually applied to failing mail: ``p=`` lowered one level by t=y / pct=0."""
+        policy = (dmarc.get("policy") or "none").lower()
+        return cls._LOWER_POLICY.get(policy, policy) if cls._lowered_by(dmarc) else policy
+
+    def _policy_lowered_by(self) -> Optional[str]:
+        """:meth:`_lowered_by` for the audited domain's DMARC."""
+        return self._lowered_by(self.dmarc_result)
+
+    def _analyze_dmarc_pct(self) -> List[AttackScenario]:
+        """Partial DMARC enforcement: ``p=quarantine|reject`` with ``pct`` between 1 and 99.
+
+        RFC 7489 §6.6.4: the policy applies to pct% of the failing mail, the other
+        (100-pct)% get the next less strict policy. Probability = likelihood that one
+        spoof escapes the sampling (``likelihood_by_pct`` ranges of the template);
+        impact = what happens to it (``impact_by_policy``: quarantine -> none is
+        delivered, reject -> quarantine lands in spam). pct=0 and t=y are handled by
+        :meth:`_dmarc_state` (whole policy one level lower), not here.
+        """
+        pct = self.dmarc_result.get("percentage")
+        policy = (self.dmarc_result.get("policy") or "").lower()
+        if (not isinstance(pct, int) or not 1 <= pct <= 99 or policy not in ("quarantine", "reject")
+                or self._policy_lowered_by() or self._dmarc_state()[0] != policy):
+            return []
+        tpl = self._tpl["external_spoofing"]["partial_enforcement_pct"]
+        row = next((r for r in tpl["likelihood_by_pct"] if r["min"] <= pct <= r["max"]), None)
+        if row is None:
+            return []
+        fallback = tpl["fallback_policy"][policy]
+        tpl = dict(tpl, vectors=[dict(v, impact=tpl["impact_by_policy"][policy], likelihood=row["likelihood"])
+                                 for v in tpl["vectors"]])
+        return [self._make_scenario(
+            tpl,
+            self._parse_probability(tpl.get("probability", "MEDIUM")),
+            policy=policy,
+            pct=pct,
+            escape=100 - pct,
+            fallback=fallback,
+            fallback_effect=tpl["fallback_effect"][fallback],
+            pct_range=row["label"],
+            likelihood=row["likelihood"],
+            three_tries=round(100 * (1 - (pct / 100) ** 3)),
+        )]
 
     def _analyze_external_spoofing(self) -> List[AttackScenario]:
         """
@@ -622,12 +718,11 @@ class AttackScenarioAnalyzer:
         ``data/tests/`` OVERRIDE the per-service baseline.
         """
         # Issue codes from mail_antispoof_policy_checker are the authoritative source.
-        dmarc_missing = self._has_issue("dmarc", "no_dmarc")
-        dmarc_none    = self._has_issue("dmarc", "dmarc_lax_policy")
-        dmarc_unprotected = dmarc_missing or dmarc_none
-        dmarc_policy = (self.dmarc_result.get("policy") or "").lower()
-
         dmarc_state, dmarc_condition = self._dmarc_state()
+        dmarc_missing = self._has_issue("dmarc", "no_dmarc")
+        # Effective state: also covers p=quarantine in test mode (t=y), handled as none.
+        dmarc_none    = dmarc_state == "none"
+        dmarc_unprotected = dmarc_missing or dmarc_none
 
         scenarios: List[AttackScenario] = []
         matched_services: Dict[str, Dict[str, Any]] = {}
@@ -980,6 +1075,9 @@ class AttackScenarioAnalyzer:
         scenarios: List[AttackScenario] = []
 
         def present(c: Dict[str, Any]) -> bool:
+            if c["result_key"] == "dmarc" and c["code"] == "dmarc_lax_policy":
+                # Effective state: p=quarantine with t=y / pct=0 is handled as p=none.
+                return self._dmarc_state()[0] == "none"
             return self._has_issue(c["result_key"], c["code"])
 
         for rule in rules:
@@ -1205,6 +1303,8 @@ class AttackScenarioAnalyzer:
             # enforcement to bypass via alignment (From:@org is spoofable anyway).
             return []
         org_policy = (dm.get("policy") or "none").lower()
+        org_lowered_by = self._lowered_by(dm)
+        org_effective = self._effective_policy(dm)
         aspf = (dm.get("alignment_spf") or "r").lower()
         adkim = (dm.get("alignment_dkim") or "r").lower()
         spf_relaxed = not aspf.startswith("s")
@@ -1222,7 +1322,8 @@ class AttackScenarioAnalyzer:
             return []
 
         org = self.org_domain
-        enforcing = org_policy in ("quarantine", "reject")
+        # t=y / pct=0 on the parent lower its policy one level (p=quarantine -> none).
+        enforcing = org_effective in ("quarantine", "reject")
         # Bypassing an ENFORCING parent policy is the dangerous case; with p=none the
         # parent is unprotected anyway (the aligned path only adds authentication).
         likelihood = "high" if enforcing else "medium"
@@ -1232,12 +1333,13 @@ class AttackScenarioAnalyzer:
         bypasses = [c for c in ("SPF", "DKIM") if c in controls] + ["DMARC"]
         align_tag = {"SPF": f"aspf={aspf}", "DKIM": f"adkim={adkim}"}
 
-        # Spoofable From targets (these go in "Affected Domains"): the organizational
-        # domain + any audited sibling sharing it whose alignment is relaxed for an
-        # active branch. Relaxed alignment is SYMMETRIC at the organizational level, so
-        # a leverage on this subdomain forges a From: on ANY of these identities — the
-        # parent AND its siblings (a sibling with no own _dmarc inherits the parent's
-        # policy and alignment) — not merely on the subdomain itself.
+        # Spoofable From targets ("Affected Domains"): the organizational domain AND every
+        # name under it ("*.<org>"). Relaxed alignment is SYMMETRIC at the organizational
+        # level, and a name with no own _dmarc (audited or not, existing or not) inherits
+        # the parent's policy and alignment, so the leverage forges a From: on any of them.
+        # The only exception is a subdomain publishing its own _dmarc with STRICT alignment
+        # for every active branch: audited ones are listed as exclusions; others cannot be
+        # known (stated as a caveat).
         spf_branch = "SPF" in controls
         dkim_branch = "DKIM" in controls
 
@@ -1245,19 +1347,20 @@ class AttackScenarioAnalyzer:
             return ((spf_branch and not (t_aspf or "r").lower().startswith("s")) or
                     (dkim_branch and not (t_adkim or "r").lower().startswith("s")))
 
-        sibling_targets: List[str] = []
+        covered: List[str] = []    # audited subdomains spoofable through this leverage
+        excluded: List[str] = []   # audited subdomains with their own strict-alignment _dmarc
         for sib, sdm in self.org_family:
             if sib in (self.domain, org):
                 continue
             sdm = sdm or {}
-            if _relaxed_target(sdm.get("alignment_spf"), sdm.get("alignment_dkim")):
-                sibling_targets.append(sib)
-        sibling_targets = sorted(dict.fromkeys(sibling_targets))
-        affected_domains = [org] + sibling_targets  # the org domain is always a target
-        siblings_clause = (
-            f" and {len(sibling_targets)} audited sibling "
-            f"identit{'y' if len(sibling_targets) == 1 else 'ies'} "
-            f"({', '.join(sibling_targets)})" if sibling_targets else "")
+            target = covered if _relaxed_target(sdm.get("alignment_spf"), sdm.get("alignment_dkim")) else excluded
+            target.append(sib)
+        covered = sorted(dict.fromkeys(covered))
+        excluded = sorted(dict.fromkeys(excluded))
+        wildcard = f"*.{org}"
+        affected_domains = [org, f"{wildcard} (except {', '.join(excluded)})" if excluded else wildcard]
+        except_clause = f" (except {', '.join(excluded)}: strict alignment)" if excluded else ""
+        siblings_clause = f" and any name under it ('{wildcard}'){except_clause}"
 
         bypass_notes: List[str] = []
         concretely: List[str] = []
@@ -1286,15 +1389,32 @@ class AttackScenarioAnalyzer:
             f"FORGED_SENDER is raised (MAIL FROM/DKIM domain '{self.domain}' != the visible From "
             f"domain), but the DMARC verdict is a PASS, even at p={org_policy}. Relaxed alignment is "
             f"bidirectional: the SAME leverage on '{self.domain}' forges a From: on the organizational "
-            f"domain '{org}'{siblings_clause}, and on any other name sharing '{org}' (a sibling with no "
-            f"own _dmarc inherits '{org}''s policy).")
+            f"domain '{org}'{siblings_clause} — a name with no own _dmarc inherits '{org}''s policy "
+            f"and alignment.")
 
-        affected_str = ", ".join(f"'{d}'" for d in affected_domains)
         conditions = [
             f"Leverage (MAIL FROM / DKIM d=): '{self.domain}', a subdomain of the organizational domain '{org}'",
-            f"Spoofable From identities (Affected Domains): {affected_str}",
-            f"'{org}' publishes an enforcing DMARC policy (p={org_policy})" if enforcing
-                else f"'{org}' publishes a DMARC record (p={org_policy}, not enforcing)",
+            f"Spoofable From identities (Affected Domains): '{org}' and any name under it ('{wildcard}'), "
+            f"existing or not, audited or not",
+        ]
+        if covered:
+            conditions.append(
+                f"Including the {len(covered)} audited subdomain{'s' if len(covered) > 1 else ''}: "
+                + ", ".join(covered))
+        if excluded:
+            conditions.append(
+                "Not spoofable this way (own _dmarc with strict alignment for the active branch): "
+                + ", ".join(excluded))
+        conditions.append(
+            f"Caveat: a subdomain of '{org}' not in the audit that publishes its own _dmarc with strict "
+            f"alignment (aspf=s / adkim=s) is not affected either (not checked)")
+        conditions += [
+            (f"'{org}' publishes an enforcing DMARC policy (p={org_policy}"
+             + (f", {org_lowered_by}: applied as p={org_effective})" if org_lowered_by else ")"))
+            if enforcing
+                else (f"'{org}' publishes a DMARC record (p={org_policy}"
+                      + (f" with {org_lowered_by}, applied as p={org_effective}" if org_lowered_by else "")
+                      + ", not enforcing)"),
         ]
         for ctrl, cap in branches:
             conditions.append(
@@ -1308,7 +1428,8 @@ class AttackScenarioAnalyzer:
         description = (
             f"The subdomain '{self.domain}' is the LEVERAGE (it is set as the envelope MAIL FROM / DKIM "
             f"d=), used to forge the visible From: on the organizational domain '{org}'{siblings_clause} "
-            f"— the Affected Domains, not '{self.domain}' itself. DMARC checks the From-header domain with "
+            f"— the Affected Domains: the whole '{org}' namespace, not only '{self.domain}'. "
+            f"DMARC checks the From-header domain with "
             f"relaxed alignment by default, so a {via} obtained on '{self.domain}' satisfies DMARC "
             f"for a From: on any identity sharing '{org}'. Concretely: "
             + "; ".join(concretely)

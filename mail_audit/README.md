@@ -170,9 +170,72 @@ A `blocked` status forces probability → Very Low (risk → Low). Dated tests c
 | `Spoofing - No DMARC Enforcement` | DMARC absent or `p=none` — **SPF may well exist** | Direct Email Spoofing via a Well-Configured or Reputation-Bearing Server |
 | `Spoofing - No SPF/DMARC Policy` | Neither SPF nor DMARC | Direct Email Spoofing - No SPF or DMARC |
 | `Spoofing - SPF/DKIM Misconfiguration` | Rule-based: `+all`, `?all`, `~all` + weak DMARC, critical SPF issues | SPF Pass All (+all) |
-| `Spoofing - DKIM Misconfiguration` | A published DKIM RSA key is factorable (< 1024 bits) — bypasses **DKIM + DMARC** (not SPF), but **only on receivers that still accept sub-1024-bit keys**: RFC 8301 verifiers like Gmail treat the key as invalid, so likelihood is **Medium** | Weak DKIM RSA key (<1024 bits) |
+| `Spoofing - DKIM Misconfiguration` | A published DKIM RSA key is broken. **Known factorization** (factordb.com, small factor, prime modulus): private key rebuilt, accepted by every verifier → **Very High** / **Critical**. **< 1024 bits**: factorable, but RFC 8301 verifiers like Gmail reject the key → **Medium**. **`e=1` / `e=3`**: forgery only on lenient verifiers → **Very Low** / **Low** | DKIM RSA key with a known factorization |
+| `Spoofing - Partial DMARC Enforcement (pct)` | `p=quarantine` or `p=reject` with `pct` between 1 and 99: the unsampled share of spoofs gets the next less strict policy. Probability by `pct` range, impact by policy (see [DMARC `pct` and `t=y`](#dmarc-pct-and-ty)) | Partial DMARC enforcement (p=quarantine; pct=50) |
 | `Spoofing - Relaxed DMARC Alignment (org-domain)` | An audited **subdomain** has an aligned-capable spoof (shared hosting / `+all`, or a weak/takeable DKIM) **and** its organizational (parent) domain enforces DMARC with **relaxed** alignment (the default) — so the subdomain can forge `From:@<parent>` | Cross-domain spoofing of `spoofin.fr` from subdomain `alwaysdata.spoofin.fr` |
 | `Spoofing - Unregistered Domain Takeover` | A CNAME (DKIM selector, `_dmarc`, domain) or an SPF `include:`/`redirect=` points into a buyable domain | DKIM selector CNAME to an unregistered domain |
+
+#### DMARC `pct` and `t=y`
+
+RFC 7489 §6.6.4: a receiver applies the policy to `pct`% of the messages failing DMARC and
+the **next less strict policy** to the others: `reject` → `quarantine`, `quarantine` → `none`.
+RFC 9989 (DMARCbis) replaced `pct` with `t=y` (test mode). Two cases:
+
+**`pct=0` or `t=y`: the whole policy is one level lower.** No message gets the published
+policy, so the DMARC state used by every spoofing scenario is lowered (`_dmarc_state`):
+
+| Record | Handled as |
+|---|---|
+| `p=reject; pct=0` / `p=reject; t=y` | `quarantine` (spoofs land in spam) |
+| `p=quarantine; pct=0` / `p=quarantine; t=y` | `none` (no enforcement: the *well-configured attacker server* scenario fires) |
+
+The effective policy is used everywhere a scenario depends on DMARC (`_effective_policy`):
+
+- every scenario driven by the DMARC state (well-configured attacker server, services in
+  the SPF, `~all` rules): `p=quarantine; t=y` gives exactly the scenarios of `p=none`;
+- the SPF qualifier rules that require `dmarc_lax_policy` (e.g. *SPF SoftFail (~all) —
+  DMARC Monitoring Only*) also fire when the policy is effectively `none`;
+- relaxed-alignment cross-domain spoofing: a parent with `p=quarantine; t=y` is **not**
+  enforcing (it is applied as `p=none`); `p=reject; pct=0` still is (applied as quarantine);
+- remediation: the record already says `p=quarantine`/`p=reject`, so these scenarios start
+  with *"remove t=y"* / *"set pct=100"* instead of *"publish an enforcing policy"*.
+
+**`pct` between 1 and 99: `Spoofing - Partial DMARC Enforcement (pct)`.** One scenario,
+built by `_analyze_dmarc_pct` from `external_spoofing.partial_enforcement_pct` in
+`lib/data/scenario_templates.json`:
+
+- **Probability** = likelihood that one spoof falls in the unsampled share
+  (`likelihood_by_pct`, editable):
+
+  | `pct` | Share escaping `p=` | Probability |
+  |---|---|---|
+  | 1 – 10 | 90 – 99 % | Very High |
+  | 11 – 35 | 65 – 89 % | High |
+  | 36 – 65 | 35 – 64 % | Medium |
+  | 66 – 90 | 10 – 34 % | Low |
+  | 91 – 99 | 1 – 9 % | Very Low |
+
+- **Impact** = what happens to an escaped spoof (`impact_by_policy`): `p=quarantine` →
+  handled as `p=none`, delivered → **critical**; `p=reject` → quarantined (spam folder) →
+  **medium**.
+- **Risk** = `risk_matrix[impact][probability]`:
+
+  | `pct` | `p=quarantine` | `p=reject` |
+  |---|---|---|
+  | 1 – 10 | Critical | High |
+  | 11 – 35 | Critical | High |
+  | 36 – 65 | High | Moderate |
+  | 66 – 90 | Moderate | Low |
+  | 91 – 99 | Low | Low |
+
+- The conditions give the odds over several copies: `1 - (pct/100)^n` (e.g. `pct=50`: 88 %
+  that at least one of 3 copies escapes).
+- *Assumed (not tested)*: the receiver implements RFC 7489 sampling. Receivers implementing
+  RFC 9989 ignore `pct` and apply the full policy.
+- Not emitted for `pct=100`, `pct=0`, `t=y` (handled above) or `p=none` (nothing enforced).
+
+The `antispoof` side reports the same ranges as issue severities (`dmarc_partial_coverage`,
+`dmarc_testing_mode`): see the `mail_antispoof_policy_checker` README.
 
 **Relaxed-alignment cross-domain spoofing (`Spoofing - Relaxed DMARC Alignment (org-domain)`)**
 
@@ -195,14 +258,19 @@ at `p=none`. The branch is dropped when the parent sets **strict** alignment (`a
 
 **Leverage vs. Affected Domains.** The audited subdomain is the **leverage** (the envelope
 `MAIL FROM` / DKIM `d=`) and appears in the **Target** column; what the attacker can actually
-forge in the visible `From:` is the **organizational domain and its siblings**, listed in
-**Affected Domains** — *not* the leverage subdomain itself. Relaxed alignment is
+forge in the visible `From:` is the **whole organizational namespace**. Relaxed alignment is
 **bidirectional / symmetric at the organizational level**: a leverage on `alwaysdata.spoofin.fr`
-forges `From:@spoofin.fr` **and** `From:@ovh.spoofin.fr`, `From:@anything-else.spoofin.fr`, etc.
-A sibling with no own `_dmarc` inherits the parent's policy and is a valid target; a sibling
-that sets **strict** alignment is excluded. The scenario's `affected_domains` therefore lists
-the organizational domain plus every audited sibling whose alignment (for an active branch) is
-relaxed.
+forges `From:@spoofin.fr` **and** `From:@ovh.spoofin.fr`, `From:@factures.spoofin.fr` (audited
+or not, existing or not), etc. — any name with no own `_dmarc` inherits the parent's policy
+and alignment. **Affected Domains** is therefore `spoofin.fr, *.spoofin.fr`:
+
+- audited subdomains covered are listed in the conditions (*"Including the N audited
+  subdomains: …"*);
+- an audited subdomain whose own `_dmarc` sets **strict** alignment for the active branch is
+  excluded: `*.spoofin.fr (except strict.spoofin.fr)`, and listed in the conditions
+  (*"Not spoofable this way …"*);
+- caveat stated in the conditions: a non-audited subdomain with its own strict-alignment
+  `_dmarc` is not affected either, which the audit cannot check.
 
 To make this detectable even when the parent is not an audit target, the auditor **derives
 each subdomain's organizational parent** (`tldextract` / PSL) and fetches **the parent's own
@@ -274,6 +342,9 @@ Rules used throughout:
 | **SPF `+all`** | SPF, DMARC | — | SPF passes for any IP, aligned → DMARC passes |
 | **SPF `?all`** | SPF | — | Neutral for any sender; an enforced DMARC still blocks the spoof |
 | **Weak DKIM RSA key** (< 1024 bits, `dkim_rsa_weak_key`) | DKIM, DMARC | — | The key is factored: aligned DKIM signature → DMARC passes. **Reality check:** per RFC 8301 a verifier treats a key < 1024 bits as invalid — Gmail (and likely other large providers) ignores the signature, so DKIM does not pass and DMARC fails; the spoof only lands on lenient/legacy receivers (likelihood **Medium**, not high) |
+| **DKIM RSA key with a known factorization** (`dkim_rsa_known_factorization`: factordb.com, small factor, prime modulus) | DKIM, DMARC | — | The private key is rebuilt (`q = n/p`, `d = e^-1 mod φ`). The key size is normal, so every verifier accepts the signature → aligned DKIM → DMARC passes even at `p=reject` (likelihood **Very High**) |
+| **Dangerous DKIM RSA exponent** (`dkim_rsa_dangerous_exponent`: `e=1`, `e=3`) | — | DKIM, DMARC | Forgery without the private key, only on a verifier that accepts `e=1` or checks the PKCS#1 v1.5 padding loosely (Bleichenbacher 2006). Mainstream verifiers are strict (likelihood **Very Low**) |
+| **Partial DMARC enforcement** (`pct` 1–99) | SPF, DKIM *(own server)* | DMARC | DMARC fails, but the unsampled `(100-pct)`% of spoofs get the next less strict policy (RFC 7489 receivers only) |
 | **Domain takeover** | the hijacked control(s) only — SPF (`include`/CNAME), DKIM (selector CNAME), DMARC (only when `_dmarc` itself is a dangling CNAME) | — | See the *Takeover scenario* paragraph above. DMARC passing via SPF/DKIM alignment is a consequence (in Bypass Conditions), not tagged as a separate bypass |
 | **Relaxed-alignment cross-domain** (weak subdomain → parent) | SPF and/or DKIM (the subdomain's), DMARC | — | Relaxed alignment on the parent (default) makes an SPF pass / DKIM signature obtained on the subdomain satisfy DMARC for `From:@<parent>`. `FORGED_SENDER` is raised but SPF/DMARC (or DKIM/DMARC) pass even at `p=reject`. See the *Relaxed-alignment cross-domain spoofing* paragraph above |
 | **MITM** | — | — | Transport attacks: the mail is read or altered in transit, no authentication bypass |
@@ -535,6 +606,9 @@ python cli.py -i example.com --dkim-selector-file ./my_selectors.txt
 # Disable the CNAME chain check / the registration check of broken CNAME targets
 python cli.py -i example.com --skip-cname-check
 python cli.py -i example.com --skip-domain-availability-check
+
+# Do not look DKIM RSA moduli up on factordb.com (offline key checks still run)
+python cli.py -i example.com --skip-factordb-check
 
 # Full options example
 python cli.py -i example.com \
@@ -1059,7 +1133,7 @@ Mail Audit/
 
 - Python >= 3.9
 - dnspython >= 2.0.0
-- checkdmarc >= 5.12.0
+- checkdmarc >= 6.0.4, < 7
 - certifi >= 2024.0.0
 - cryptography >= 41.0.0
 - pandas >= 1.3.0

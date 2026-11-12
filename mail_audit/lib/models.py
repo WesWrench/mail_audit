@@ -25,7 +25,8 @@ class AttackType(str, Enum):
     SPOOFING_NO_POLICY = "Spoofing - No SPF/DMARC Policy"          # neither SPF nor DMARC
     SPOOFING_NO_DMARC_ENFORCEMENT = "Spoofing - No DMARC Enforcement"  # DMARC absent or p=none
     SPOOFING_AUTH_MISCONFIG = "Spoofing - SPF/DKIM Misconfiguration"   # +all, ~all, critical SPF...
-    SPOOFING_DKIM_MISCONFIG = "Spoofing - DKIM Misconfiguration"       # weak DKIM RSA key (factorable)
+    SPOOFING_DKIM_MISCONFIG = "Spoofing - DKIM Misconfiguration"       # weak / factored / bad-exponent DKIM RSA key
+    SPOOFING_PARTIAL_DMARC = "Spoofing - Partial DMARC Enforcement (pct)"  # pct 1-99: part of the spoofs escape p=
     SPOOFING_RELAXED_ALIGNMENT = "Spoofing - Relaxed DMARC Alignment (org-domain)"  # weak subdomain spoofs the parent
     SPOOFING_DOMAIN_TAKEOVER = "Spoofing - Unregistered Domain Takeover"  # buyable domain behind CNAME / SPF include
     OPEN_RELAY = "Open Relay"

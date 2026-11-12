@@ -234,6 +234,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip the CNAME chain check on DKIM selector, _dmarc and SPF domain names",
     )
     antispoof_group.add_argument(
+        "--skip-factordb-check",
+        action="store_true",
+        help=(
+            "Do not look DKIM RSA moduli up on factordb.com (known factorizations). "
+            "The offline key checks (exponent, small factor, prime modulus) still run"
+        ),
+    )
+    antispoof_group.add_argument(
         "--skip-domain-availability-check",
         action="store_true",
         help="Do not check whether broken CNAME targets point to unregistered domains",
@@ -528,6 +536,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             dkim_selector_file=args.dkim_selector_file,
             cname_check=not args.skip_cname_check,
             skip_domain_availability_check=args.skip_domain_availability_check,
+            factordb_check=not args.skip_factordb_check,
             # Execution
             skip_smtp=args.no_smtp,
             output_dir=args.output_dir,

@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **DMARC test mode (`t=y`, RFC 9989) and `pct=0`** lower the effective policy by one level in
+  the spoofing scenarios: `p=reject` is handled as quarantine, `p=quarantine` as none
+  (RFC 7489 §6.6.4: unsampled mail gets the next less strict policy). The effective policy
+  also drives the rules that require `dmarc_lax_policy` (*SPF SoftFail (~all) — DMARC
+  Monitoring Only*), the parent's enforcement in relaxed-alignment scenarios, and the
+  remediation ("remove t=y" / "set pct=100" instead of "publish an enforcing policy").
+- **`Spoofing - Partial DMARC Enforcement (pct)`** scenario for `pct` 1–99 with
+  `p=quarantine`/`p=reject`: probability by `pct` range (`likelihood_by_pct`: 1–10 very high,
+  11–35 high, 36–65 medium, 66–90 low, 91–99 very low), impact by policy (escapes from
+  quarantine are delivered → critical; from reject they are quarantined → medium).
+- **DKIM scenarios**: *DKIM RSA key with a known factorization* (very high / critical, even at
+  `p=reject`) and *dangerous public exponent* `e=1`/`e=3` (very low / low, lenient verifiers only).
+- `--skip-factordb-check` / `MailAuditor(factordb_check=False)`. *DKIM Issues* sheet: **RSA
+  Exponent**, **factordb** (link) and **factordb Note** columns.
+- Relaxed-alignment scenario: **Affected Domains** is now `<org>, *.<org>` (the whole
+  namespace, audited or not) instead of the long list of audited siblings. Audited subdomains
+  with their own strict-alignment `_dmarc` appear as `*.<org> (except …)`; the covered audited
+  subdomains and a caveat for non-audited strict ones are listed in the conditions.
+- *DMARC Records* sheet: **Non-existent Subdomain Policy** (`np`) and **Test Mode (t=y)**
+  columns.
+
 ## [2.2.0] - 2026-10-29
 
 ### Added

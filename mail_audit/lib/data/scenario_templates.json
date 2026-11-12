@@ -288,6 +288,54 @@
       ]
     },
 
+    "partial_enforcement_pct": {
+      "_comment": "DMARC pct (RFC 7489 §6.6.4): the policy applies to pct% of the failing mail; the other (100-pct)% receive the next less strict policy (reject -> quarantine, quarantine -> none). Probability = how likely ONE spoof falls in the unsampled share; impact = what happens to that share. pct=0 and t=y are not here: they lower the whole DMARC state by one level (_dmarc_state). RFC 9989 removed pct: receivers implementing it ignore pct and apply the full policy.",
+      "attack_type": "SPOOFING_PARTIAL_DMARC",
+      "probability": "MEDIUM",
+      "likelihood_by_pct": [
+        {"min": 1,  "max": 10, "likelihood": "very_high", "label": "1-10"},
+        {"min": 11, "max": 35, "likelihood": "high",      "label": "11-35"},
+        {"min": 36, "max": 65, "likelihood": "medium",    "label": "36-65"},
+        {"min": 66, "max": 90, "likelihood": "low",       "label": "66-90"},
+        {"min": 91, "max": 99, "likelihood": "very_low",  "label": "91-99"}
+      ],
+      "impact_by_policy": {
+        "_comment": "Impact of a spoof that escapes the sampling: under p=quarantine it gets p=none (delivered, inbox possible) -> critical; under p=reject it gets quarantined (spam folder) -> medium.",
+        "quarantine": "critical",
+        "reject": "medium"
+      },
+      "fallback_policy": {"quarantine": "none", "reject": "quarantine"},
+      "bypasses": ["SPF", "DKIM"],
+      "conditional_bypasses": ["DMARC"],
+      "bypass_notes": [
+        "SPF / DKIM: the attacker sends from their own server, signed with their own key: neither aligns with the forged From, so DMARC fails.",
+        "DMARC (conditional): the failure leads to p={policy} only for the {pct}% of messages the receiver samples; the other {escape}% get p={fallback} — on receivers implementing RFC 7489 pct sampling. RFC 9989 receivers ignore pct and apply p={policy} to everything."
+      ],
+      "scenario_name": "Partial DMARC enforcement (p={policy}; pct={pct}) — {escape}% of spoofs handled as p={fallback}",
+      "conditions_met": [
+        "DMARC p={policy} with pct={pct}: the policy applies to {pct}% of the messages failing DMARC; the other {escape}% receive the next less strict policy, p={fallback} (RFC 7489 §6.6.4)",
+        "pct range {pct_range} -> probability {likelihood} that a given spoof escapes p={policy} (table likelihood_by_pct in scenario_templates.json)",
+        "Repeated sending: n copies give 1 - ({pct}/100)^n chances that at least one escapes ({three_tries}% with 3 copies)",
+        "Assumed (not tested): the receiver implements RFC 7489 pct sampling. RFC 9989 (DMARCbis) removed pct: such receivers apply p={policy} to every message, and this scenario does not apply to them"
+      ],
+      "description_template": "The domain '{domain}' publishes DMARC p={policy} with pct={pct}. Under RFC 7489 a receiver applies p={policy} to {pct}% of the messages failing DMARC and the next less strict policy, p={fallback}, to the other {escape}%. A spoof sent from the attacker's own server (unaligned SPF/DKIM) therefore has about {escape}% chances to be handled as p={fallback} — {fallback_effect}. Sending several copies raises the odds ({three_tries}% that at least one of 3 copies escapes). Receivers implementing RFC 9989 (DMARCbis) ignore pct and apply the full policy.",
+      "fallback_effect": {
+        "none": "no DMARC action: the message is delivered and judged by the receiver's other signals (inbox possible)",
+        "quarantine": "quarantined (spam folder) instead of rejected"
+      },
+      "remediation": "Set pct=100 (or remove pct): the policy then applies to every message failing DMARC. To test a policy, use t=y (RFC 9989) for a limited period, then remove it.",
+      "vectors": [
+        {
+          "vector_type": "smtp_server",
+          "auth_mode": "none",
+          "status": "UNVERIFIED",
+          "port": "25",
+          "transport": "server_to_server",
+          "steps": "1. Stand up a well-configured MTA (PTR/rDNS, HELO, own SPF and DKIM for the attacker's own domain).\n2. Send From: <ceo@{domain}> directly to the recipient's MX (port 25).\n3. DMARC fails (no alignment); a receiver implementing pct sampling applies p={policy} to {pct}% of such messages and p={fallback} to the other {escape}%.\n4. Send a few copies: each one has about {escape}% chances to be handled as p={fallback}."
+        }
+      ]
+    },
+
     "domain_takeover": {
       "attack_type": "SPOOFING_DOMAIN_TAKEOVER",
       "_comment": "One scenario per audited domain, built by AttackScenarioAnalyzer._analyze_domain_takeover() from the *_cname_target_(potentially_)unregistered and spf_domain_(potentially_)unregistered issues. One condition + one vector per vulnerable DNS name. Likelihood: confirmed=high, potentially=medium; DMARC-only takeover one notch lower when SPF ends in -all. Impact is always critical; risk = risk_matrix[impact][likelihood].",
@@ -423,6 +471,81 @@
             "impact": "critical",
             "likelihood": "medium",
             "steps": "1. Use any SMTP server/tool from any IP.\n2. Set From: <ceo@{domain}>.\n3. Send to the target.\n4. SPF check: ?all -> neutral (treated like no SPF).\n5. Delivery succeeds where DMARC is weak/absent or the receiver treats neutral leniently."
+          }
+        ]
+      },
+      {
+        "rule_id": "DKIM_RSA_KNOWN_FACTORIZATION",
+        "attack_type": "SPOOFING_DKIM_MISCONFIG",
+        "probability": "CRITICAL",
+        "bypasses": ["DKIM", "DMARC"],
+        "bypass_notes": [
+          "DKIM: the private key is rebuilt from the known factorization (or prime modulus): the attacker signs as d={domain} with a key of a normal size (>= 1024 bits) that every verifier accepts, so DKIM passes aligned.",
+          "DMARC: passes through DKIM alignment, whatever the policy, even p=reject.",
+          "SPF: not needed (DMARC passes through DKIM)."
+        ],
+        "condition_issue_codes": [
+          {"result_key": "dkim", "code": "dkim_rsa_known_factorization"}
+        ],
+        "scenario_name": "DKIM RSA key with a known factorization — rebuild the private key, sign, align DMARC via DKIM",
+        "conditions_met": [
+          "A published DKIM RSA modulus has a known factor: factorization published on factordb.com (verified locally: n mod p = 0), a small prime factor, or a prime modulus",
+          "The private key follows directly: q = n / p, d = e^-1 mod (p-1)(q-1) — no factoring effort",
+          "Unlike a sub-1024-bit key, the key size is accepted by RFC 8301 verifiers (Gmail, Microsoft...): the forged signature validates everywhere"
+        ],
+        "description_template": "A DKIM RSA public key published by '{domain}' is broken: one factor of its modulus is known (published on factordb.com, found by trial division, or the modulus is prime). The attacker rebuilds the private key in seconds and signs a forged message with d={domain}. The signature is valid and aligned with the From, and the key size is accepted by every verifier, so DMARC passes on the DKIM branch EVEN UNDER p=reject, regardless of SPF.",
+        "remediation": "Revoke the selector now (publish an empty p=), generate a NEW 2048-bit RSA key on a trusted system (never reuse or copy an example key), publish it under a new selector and re-sign outbound mail.",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "impact": "critical",
+            "likelihood": "very_high",
+            "port": "25",
+            "transport": "server_to_server",
+            "steps": "1. Fetch the DKIM public key from DNS (<selector>._domainkey.{domain}) and read n, e.\n2. Take the known factor p (factordb.com / trial division), compute q = n / p and d = e^-1 mod (p-1)(q-1).\n3. Craft From: <ceo@{domain}> and DKIM-sign it with d={domain} using the rebuilt key.\n4. Send directly to the recipient's MX on port 25.\n5. DKIM verifies and aligns -> DMARC passes, even under p=reject."
+          },
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "account",
+            "impact": "critical",
+            "likelihood": "very_high",
+            "port": "587/465",
+            "transport": "client_to_server",
+            "steps": "1. Rebuild the private key from the known factor.\n2. Sign From: <ceo@{domain}> with d={domain}.\n3. Submit through any relay / provider you have an account on: the DKIM signature travels with the message and stays valid and aligned -> DMARC passes, independently of the relay's own SPF/DKIM."
+          }
+        ]
+      },
+      {
+        "rule_id": "DKIM_RSA_DANGEROUS_EXPONENT",
+        "attack_type": "SPOOFING_DKIM_MISCONFIG",
+        "probability": "LOW",
+        "bypasses": [],
+        "conditional_bypasses": ["DKIM", "DMARC"],
+        "bypass_notes": [
+          "DKIM (conditional): forgeable only on a verifier that accepts e=1 or that checks the PKCS#1 v1.5 padding loosely (e=3, Bleichenbacher 2006). Current OpenSSL-based verifiers check the padding strictly.",
+          "DMARC (conditional): passes through DKIM alignment on such a verifier, even at p=reject."
+        ],
+        "condition_issue_codes": [
+          {"result_key": "dkim", "code": "dkim_rsa_dangerous_exponent"}
+        ],
+        "scenario_name": "DKIM RSA key with a dangerous public exponent (e=1 / e=3) — signature forgery on lenient verifiers",
+        "conditions_met": [
+          "A published DKIM RSA key uses e=1 or e=3 (see the dkim_rsa_dangerous_exponent issue)",
+          "e=1: s^1 = s, the padded hash itself is a valid signature; e=3: a cube root of a crafted value passes a verifier that does not check the whole PKCS#1 v1.5 padding (Bleichenbacher 2006)",
+          "Assumed (not tested): the receiver's verifier accepts the exponent and checks the padding loosely — current mainstream verifiers do not, hence a very low likelihood"
+        ],
+        "description_template": "A DKIM RSA key published by '{domain}' uses a dangerous public exponent (e=1 or e=3). On a verifier that accepts it and checks the PKCS#1 v1.5 padding loosely, an attacker can forge a DKIM signature with d={domain} without the private key (e=1: the padded hash is its own signature; e=3: Bleichenbacher's 2006 cube-root forgery), so DMARC passes on the DKIM branch. Mainstream verifiers check the padding strictly, which makes the attack unlikely today; the key must be replaced anyway.",
+        "remediation": "Replace the key with a new 2048-bit RSA key using e=65537, publish it under a new selector and revoke the old one (empty p=).",
+        "vectors": [
+          {
+            "vector_type": "smtp_server",
+            "auth_mode": "none",
+            "impact": "critical",
+            "likelihood": "very_low",
+            "port": "25",
+            "transport": "server_to_server",
+            "steps": "1. Read the DKIM key (<selector>._domainkey.{domain}): e=1 or e=3.\n2. e=1: use the PKCS#1 v1.5 encoded hash of the forged message as the signature. e=3: craft a value whose cube starts with the expected padding and hash (Bleichenbacher 2006).\n3. Send From: <ceo@{domain}> with that DKIM-Signature (d={domain}) to the recipient's MX.\n4. Only a lenient verifier accepts it -> DKIM passes aligned -> DMARC passes."
           }
         ]
       },

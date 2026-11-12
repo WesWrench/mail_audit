@@ -31,6 +31,7 @@ from mail_antispoof_policy_checker.lib import (
     organizational_domain,
     derive_org_parents,
 )
+from mail_antispoof_policy_checker.lib.utils.factordb import FactorDBClient
 from mail_antispoof_policy_checker.lib.checkers.unregistered_domain_checker import (
     check_domains_availability,
     collect_spf_include_sources,
@@ -121,6 +122,9 @@ class MailAuditor:
     skip_domain_availability_check : bool
         Do not run the end-of-run registration check (SPF include domains and
         broken CNAME targets, which then stay ``not_verified``).  Default ``False``.
+    factordb_check : bool
+        Look each DKIM RSA modulus up on factordb.com (known factorizations).
+        The offline key checks run either way.  Default ``True``.
     skip_smtp : bool
         When ``True``, skip smtp_checker entirely.  No SMTP connections are
         made; MITM and open-relay scenarios are not generated.  Useful for
@@ -168,6 +172,7 @@ class MailAuditor:
         dkim_selector_file: Optional[str] = None,
         cname_check: bool = True,
         skip_domain_availability_check: bool = False,
+        factordb_check: bool = True,
         # DNS concurrency limiting (AsyncPooledDNSResolver)
         max_dns_global_concurrent: int = 50,
         max_dns_per_nameserver: int = 20,
@@ -233,6 +238,7 @@ class MailAuditor:
         self.dkim_selector_file_is_custom = bool(dkim_selector_file)
         self.cname_check = cname_check
         self.skip_domain_availability_check = skip_domain_availability_check
+        self.factordb_check = factordb_check
 
         # Execution options
         self.skip_smtp = skip_smtp
@@ -497,6 +503,8 @@ class MailAuditor:
                             "DMARC Record":       dmarc.get("dmarc_record", ""),
                             "Policy":             dmarc.get("policy", "N/A"),
                             "Subdomain Policy":   dmarc.get("subdomain_policy", "N/A"),
+                            "Non-existent Subdomain Policy": dmarc.get("np_policy", "N/A"),
+                            "Test Mode (t=y)":    "yes" if dmarc.get("testing") else "no",
                             "Percentage":         dmarc.get("percentage", "N/A"),
                             "Issues Count":       len(dmarc.get("issues") or []),
                         })
@@ -611,6 +619,9 @@ class MailAuditor:
                                 "Selector":  additional_data.get("selector")
                                              or ", ".join(additional_data.get("selectors") or []),
                                 "Key Size":  additional_data.get("key_size", ""),
+                                "RSA Exponent": additional_data.get("exponent", ""),
+                                "factordb":  (additional_data.get("factordb") or {}).get("url", ""),
+                                "factordb Note": " ".join((additional_data.get("factordb") or {}).get("notes") or []),
                                 "CNAME Chain": " -> ".join(additional_data.get("chain") or []),
                                 "Domain To Buy": additional_data.get("registrable_domain", ""),
                                 "Detail":    issue.get("detail", ""),
@@ -828,6 +839,7 @@ class MailAuditor:
                     "nameservers": self.nameservers,
                     "max_dns_retries": self.max_dns_retries,
                     "cname_check": self.cname_check,
+                    "factordb": FactorDBClient() if self.factordb_check else None,
                 }
                 if Path(self.dkim_selector_file).exists():
                     dkim_kwargs["selector_file"] = self.dkim_selector_file
