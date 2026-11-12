@@ -104,6 +104,7 @@ requirements.txt`) or use a dedicated virtual environment.
 |---|---|---|
 | MaxMind license key: `--maxmind-key` or env `MAXMIND_LICENSE_KEY` (free GeoLite2 account) | AS organization of SPF IP ranges | AS organization lookups are skipped |
 | `mail_antispoof_policy_checker/lib/domain/` (WHOIS/RDAP + availability checkers) | Unregistered domains in SPF includes and CNAME targets (domain takeover) | That check is disabled. Everything else runs |
+| factordb.com (public website, no account) | Known factorizations of DKIM RSA moduli (`dkim_rsa_known_factorization`) | Unreachable or `--skip-factordb-check`: the offline key checks (exponent, small factor, prime modulus) still run |
 | `lib/domain/domain_availability_service_checker/` (registrar APIs) | Last stage of the availability check, for domains WHOIS/RDAP cannot decide | NS + WHOIS/RDAP still decide. Undecided domains are reported *potentially unregistered* |
 
 ### MaxMind license key
@@ -243,4 +244,4 @@ cd mail_antispoof_policy_checker && python -m pytest tests -q
 | Code changes have no effect | The packages are installed from another copy of the repository. Check the paths shown by `pip show -f smtp-checker` / `python -c "import mail_audit; print(mail_audit.__file__)"` |
 | `ModuleNotFoundError: No module named 'lib'` | A standalone CLI was not launched from its own folder. `cd smtp_checker` (or `mail_antispoof_policy_checker`) and then run `python cli.py` |
 | `UnicodeEncodeError: 'charmap' codec…` on Windows when redirecting output | Set `PYTHONUTF8=1` (`$env:PYTHONUTF8 = "1"` in PowerShell) |
-| Odd or outdated DNS results | Local resolver cache: add `--dns-server 1.1.1.1 --nameservers 1.1.1.1` |
+| Odd or outdated DNS results | Local resolver cache: add `--nameservers "1.1.1.1,8.8.8.8"` (one list for both SMTP and antispoof checks) |
