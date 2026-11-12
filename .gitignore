@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Audit outputs (contain audited domains and results)
+test_output*/
+output/
+*.log
+
+# MaxMind databases downloaded at runtime (licensed, large)
+mail_antispoof_policy_checker/utils/maxmind/
+*.mmdb
+
+# Secrets
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Internal domain-availability libraries (see mail_antispoof_policy_checker/README.md,
+# Installation step 3). Uncomment to keep them out of the repository: the tools still run,
+# with the unregistered-domain check disabled or reduced.
+# mail_antispoof_policy_checker/lib/domain/domain_availability_checker/
+mail_antispoof_policy_checker/lib/domain/domain_availability_service_checker/
+# mail_antispoof_policy_checker/lib/domain/hybridwhois/
+# mail_antispoof_policy_checker/lib/domain/whoisit/
+# mail_antispoof_policy_checker/lib/domain/whoisitlegacy/
