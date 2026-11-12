@@ -1,5 +1,52 @@
 # CHANGELOG — Mail AntiSpoof Policy Checker
 
+## [Unreleased]
+
+### Changed
+
+- **Requires `checkdmarc>=6.0.4,<7`** (RFC 9989 / DMARCbis). checkdmarc 5.13+ renamed
+  `timeout_retries` to `retries`: with a fresh install, `parse_spf_record` raised a
+  `TypeError` that was silently caught, so SPF fell back to basic parsing (no recursive
+  include analysis). Calls now pass `retries=`.
+- **DMARC parsing relies on checkdmarc 6 only.** The strip-and-reparse workaround for `np=`
+  (`_reparse_tolerating_tags`, `_strip_dmarc_tags`, `_apply_native_tags`) is removed:
+  checkdmarc 6 supports `np`, `psd` and `t`, and ignores unknown tags. The inherited
+  subdomain policy (RFC 9091) now uses checkdmarc's resolved `sp` / `np` values and its
+  `explicit` flags instead of re-tokenising the record.
+
+### Added
+
+- **DKIM RSA key checks** (`lib/utils/rsa_key_checks.py`): the public exponent is rated
+  (`dkim_rsa_dangerous_exponent`: `e=1` critical, `e=3` high; `dkim_rsa_nonstandard_exponent`:
+  legacy `3 < e < 65537` / `e >= 2^256` low, invalid even or `< 3` medium), and
+  `dkim_rsa_known_factorization` (critical) is raised when anyone can compute the private key:
+  small prime factor (< 2^16) or prime modulus (offline), or factorization published on
+  factordb.com. `n` and `e` are read from the DER directly, so keys `cryptography` refuses to
+  load (`e=1`) are rated instead of reported as syntax errors.
+- **factordb.com client** (`lib/utils/factordb.py`): reads the search page (not the throttled
+  API; reading stores nothing), verifies every factor locally (`n mod p = 0`), follows the
+  site's limits (own User-Agent, one request at a time, 0.5 s interval, stops after HTTP 429),
+  caches per modulus. Keeps factordb's information box ("Interesting number. ...", e.g. Logjam
+  DH prime, RSA challenge) in `notes`; queried even after an offline finding to get it.
+  `DKIMChecker(factordb=...)`, CLI `--skip-factordb-check`. Selectors gain `rsa_exponent` and
+  `factordb` (`status`, `url`, `notes`, `factor_digits`) in the JSON output.
+- **`dmarc_partial_coverage` severity by `pct` range and policy** (`DMARC_PCT_SEVERITY`):
+  `p=quarantine` high (0–35) / medium (36–65) / low (66–99); `p=reject` medium (0–35) /
+  low (36–99); `p=none` low. `additional_data` gains `escape_rate`, `pct_range`, `policy`,
+  `fallback_policy`.
+- **`dmarc_testing_mode`** issue for `t=y` (RFC 9989 test mode) on `p=reject` (medium) or
+  `p=quarantine` (high). `DMARCResult` gains `testing` and `psd`.
+
+### Fixed
+
+- **`pct` < 100 reported again.** RFC 9989 removed `pct`, so checkdmarc 5.17+/6 drops it from
+  the parsed tags and `dmarc_partial_coverage` was never raised. `pct` is now read from the
+  raw record: receivers implementing RFC 7489 still apply it.
+- **`p=none` no longer reported twice.** checkdmarc fills an implicit `sp` (= `p`), which
+  also raised `dmarc_lax_subdomain_policy`. That issue now requires a published `sp=`.
+- `InvalidDMARCReportURI` was unreachable (caught as its parent `InvalidDMARCTagValue`).
+  Tag/value extraction follows checkdmarc 6 error messages.
+
 ## [2.2.0] - 2026-10-29
 
 ### Changed (breaking)

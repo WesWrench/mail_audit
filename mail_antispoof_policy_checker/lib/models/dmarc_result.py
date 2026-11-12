@@ -16,7 +16,9 @@ class DMARCResult:
     policy: Optional[str] = None
     subdomain_policy: Optional[str] = None
     np_policy: Optional[str] = None  # RFC 9091 non-existent-subdomain policy (np=)
-    percentage: int = 100
+    testing: bool = False  # RFC 9989 t=y: policy published in test mode (not to be applied)
+    psd: Optional[str] = None  # RFC 9989 psd= flag (y / n / u)
+    percentage: int = 100  # RFC 7489 pct= (removed in RFC 9989, still honoured by older receivers)
     aggregate_reports: List[str] = field(default_factory=list)
     forensic_reports: List[str] = field(default_factory=list)
     alignment_spf: Optional[str] = None
@@ -36,6 +38,8 @@ class DMARCResult:
             'policy': self.policy,
             'subdomain_policy': self.subdomain_policy,
             'np_policy': self.np_policy,
+            'testing': self.testing,
+            'psd': self.psd,
             'percentage': self.percentage,
             'aggregate_reports': self.aggregate_reports,
             'forensic_reports': self.forensic_reports,

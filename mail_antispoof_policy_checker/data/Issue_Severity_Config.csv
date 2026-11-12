@@ -22,7 +22,8 @@ spf_domain_potentially_unregistered;Potentially unregistered domain;SPF;high;hig
 no_dmarc;No DMARC;DMARC;critical;critical;No DMARC record found
 dmarc_lax_policy;Lax DMARC policy;DMARC;high;high;DMARC policy is 'none'
 dmarc_lax_subdomain_policy;Lax DMARC subdomain policy;DMARC;medium;medium;DMARC subdomain policy is weak
-dmarc_partial_coverage;Partial DMARC coverage;DMARC;medium;medium;DMARC pct < 100%
+dmarc_partial_coverage;Partial DMARC coverage;DMARC;medium;medium;DMARC pct < 100%: severity by pct range and policy (IssueDefinitions.DMARC_PCT_SEVERITY)
+dmarc_testing_mode;DMARC policy in test mode;DMARC;high;high;DMARC t=y (RFC 9989): policy applied one level lower (medium when p=reject)
 dmarc_dns_timeout;DNS Timeout on Email Domain;DMARC;high;high;DNS timeout on domain used for email (has MX/SPF/DMARC/SMTP)
 dmarc_syntax_error;DMARC Syntax Error;DMARC;high;high;DMARC record has syntax error
 dmarc_invalid_tag;Invalid DMARC Tag;DMARC;medium;medium;DMARC contains unrecognized tag
@@ -32,6 +33,9 @@ dmarc_multiple_records;Multiple DMARC Records;DMARC;high;high;Multiple DMARC rec
 dkim_no_selectors;No DKIM selectors found;DKIM;medium;medium;None of the tested DKIM selectors were found for this domain
 dkim_rsa_weak_key;Weak DKIM RSA key size;DKIM;high;high;DKIM RSA key < 1024 bits
 dkim_rsa_perfectible_key;Perfectible DKIM RSA key size;DKIM;low;low;DKIM RSA key = 1024 bits (2048 recommended)
+dkim_rsa_known_factorization;DKIM RSA private key is recoverable;DKIM;critical;critical;Modulus factor known (factordb.com / small factor) or prime modulus
+dkim_rsa_dangerous_exponent;Dangerous DKIM RSA public exponent;DKIM;high;high;e=3 (high) or e=1 (critical)
+dkim_rsa_nonstandard_exponent;Non-standard DKIM RSA public exponent;DKIM;low;low;Legacy 3<e<65537 or e>=2^256 (low); invalid even/e<3 (medium)
 dkim_dns_timeout;DNS Timeout on Email Domain;DKIM;high;high;DNS timeout on domain used for email (has MX/SPF/DMARC/SMTP)
 dkim_syntax_error;DKIM Syntax Error;DKIM;medium;medium;DKIM record has syntax error
 spf_cname_target_unregistered;SPF domain CNAME points to an unregistered domain;SPF;critical;critical;Registrable domain of broken alias target appears unregistered

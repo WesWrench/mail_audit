@@ -11,6 +11,10 @@ from cryptography.hazmat.backends import default_backend
 from ..models.dkim_result import DKIMResult, DKIMSelectorInfo
 from ..models.issue import IssueSeverity
 from ..utils.dns_utils import DNSUtils, DNSQueryOutcome, STATUS_NOERROR, STATUS_TIMEOUT
+from ..utils.factordb import FactorDBClient
+from ..utils.rsa_key_checks import (
+    EXPONENT_STANDARD, is_probable_prime, parse_rsa_spki, rate_exponent, small_prime_factor,
+)
 from .issue_definitions import IssueDefinitions
 from .cname_checker import CNAMEChecker, DEFAULT_MAX_DEPTH, DEFAULT_WILDCARD_PROBES
 
@@ -24,9 +28,14 @@ class DKIMChecker:
     - Discovers DKIM selectors from a known list
     - Reads the key type (k=, default rsa) and checks p= against it
     - Reports weak / perfectible RSA keys (size thresholds apply to RSA only)
+    - Rates the RSA public exponent (e=1 / e=3 dangerous, e != 65537 non-standard)
+    - Detects RSA keys whose private key anyone can compute: small factor, prime
+      modulus (offline), or factorization published on factordb.com (optional)
     - Detects broken / suspicious CNAME chains at selector names, with
       wildcard probing to avoid enumeration false positives
     """
+
+    factordb: Optional[FactorDBClient] = None   # factordb.com client (None = no lookup)
 
     def __init__(
         self,
@@ -37,6 +46,7 @@ class DKIMChecker:
         cname_check: bool = True,
         cname_max_depth: int = DEFAULT_MAX_DEPTH,
         wildcard_probes: int = DEFAULT_WILDCARD_PROBES,
+        factordb: Optional[FactorDBClient] = None,
     ):
         """
         Initialize DKIM checker.
@@ -51,10 +61,13 @@ class DKIMChecker:
             cname_check: If True, CNAME chains found at selector names are checked
             cname_max_depth: Maximum number of CNAME links followed
             wildcard_probes: Random sibling names probed per selector parent (min 3)
+            factordb: Client used to look each RSA modulus up on factordb.com
+                      (None = no network lookup; the offline checks always run)
         """
         self.dns_utils = DNSUtils(timeout=dns_timeout, nameservers=nameservers, max_retries=max_dns_retries)
         self.selector_file = selector_file
         self.selectors = self._load_selectors(selector_file)
+        self.factordb = factordb
         self.cname_checker: Optional[CNAMEChecker] = (
             CNAMEChecker(self.dns_utils, max_depth=cname_max_depth, wildcard_probes=wildcard_probes)
             if cname_check else None
@@ -340,6 +353,40 @@ class DKIMChecker:
             issue = self._rsa_key_size_issue(selector, key_size)
             if issue:
                 selector_info.issues.append(issue)
+            numbers = parse_rsa_spki(base64.b64decode(selector_info.public_key))
+            if numbers:
+                self._check_rsa_numbers(selector_info, selector, *numbers)
+
+    def _check_rsa_numbers(self, selector_info: DKIMSelectorInfo, selector: str, n: int, e: int) -> None:
+        """Exponent rating, then "can anyone compute the private key?" checks on (n, e).
+
+        Offline (trial division below 2^16, Miller-Rabin primality) and factordb.com
+        when a client is configured. factordb is queried even after an offline finding:
+        its information box ("Interesting number. ...") tells where the key comes from
+        (e.g. a Logjam DH prime). One finding at most; an offline source wins.
+        """
+        selector_info.rsa_exponent = e
+        rating, reason = rate_exponent(e)
+        if rating != EXPONENT_STANDARD:
+            selector_info.issues.append(
+                IssueDefinitions.create_dkim_rsa_exponent_issue(selector, e, rating, reason))
+
+        key_size = n.bit_length()
+        lookup = self.factordb.lookup(n) if self.factordb is not None else None
+        factordb = lookup.to_dict() if lookup is not None else None
+        selector_info.factordb = factordb
+
+        factor = small_prime_factor(n)
+        if factor:
+            source, digits = 'small_factor', [len(str(factor))]
+        elif is_probable_prime(n):
+            source, digits = 'prime_modulus', None
+        elif lookup is not None and lookup.factor_known:
+            source, digits = 'factordb', [len(str(f)) for f in lookup.factors]
+        else:
+            return
+        selector_info.issues.append(IssueDefinitions.create_dkim_rsa_known_factorization(
+            selector, key_size, source, factor_digits=digits, factordb=factordb))
 
     @staticmethod
     def _inspect_key(key_type: str, public_key_b64: str) -> Tuple[Optional[int], Optional[str]]:
@@ -386,6 +433,11 @@ class DKIMChecker:
 
         if algorithm == 'RSA':
             return der_key.key_size, None
+        # An RSA SubjectPublicKeyInfo that cryptography refuses to load because of its
+        # exponent (e < 3): still an RSA key, rated by the exponent check.
+        numbers = parse_rsa_spki(raw_key) if der_key is None else None
+        if numbers:
+            return numbers[0].bit_length(), None
         if algorithm:
             return None, f"k=rsa (declared or default) but p= holds a {algorithm} key"
         if len(raw_key) == ED25519_KEY_BYTES:

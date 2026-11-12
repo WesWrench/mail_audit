@@ -34,6 +34,7 @@ class IssueDefinitions:
     DMARC_LAX_POLICY            = "dmarc_lax_policy"
     DMARC_LAX_SUBDOMAIN_POLICY  = "dmarc_lax_subdomain_policy"
     DMARC_NOT_100_PCT           = "dmarc_partial_coverage"
+    DMARC_TESTING_MODE          = "dmarc_testing_mode"
     DMARC_DNS_TIMEOUT           = "dmarc_dns_timeout"
     DMARC_SYNTAX_ERROR          = "dmarc_syntax_error"
     DMARC_INVALID_TAG           = "dmarc_invalid_tag"
@@ -45,6 +46,9 @@ class IssueDefinitions:
     DKIM_NO_SELECTORS_FOUND = "dkim_no_selectors"
     DKIM_RSA_WEAK_KEY       = "dkim_rsa_weak_key"
     DKIM_RSA_PERFECTIBLE_KEY = "dkim_rsa_perfectible_key"
+    DKIM_RSA_KNOWN_FACTORIZATION = "dkim_rsa_known_factorization"
+    DKIM_RSA_DANGEROUS_EXPONENT = "dkim_rsa_dangerous_exponent"
+    DKIM_RSA_NONSTANDARD_EXPONENT = "dkim_rsa_nonstandard_exponent"
     DKIM_DNS_TIMEOUT        = "dkim_dns_timeout"
     DKIM_SYNTAX_ERROR       = "dkim_syntax_error"
 
@@ -438,16 +442,68 @@ class IssueDefinitions:
             additional_data={'subdomain_policy': policy}
         )
 
+    # Severity of dmarc_partial_coverage by pct range and policy (RFC 7489 §6.6.4: the
+    # (100 - pct)% of failing mail not sampled gets the next less strict policy).
+    # p=quarantine: escaped spoofs get p=none (delivered); p=reject: they are quarantined.
+    # pct=0 = every message one level lower, rated like t=y. Same ranges as the
+    # likelihood_by_pct table of mail_audit's scenario_templates.json.
+    DMARC_PCT_SEVERITY = (
+        # (min, max, label, severity if p=quarantine, severity if p=reject)
+        (0, 0, "0", IssueSeverity.HIGH, IssueSeverity.MEDIUM),
+        (1, 10, "1-10", IssueSeverity.HIGH, IssueSeverity.MEDIUM),
+        (11, 35, "11-35", IssueSeverity.HIGH, IssueSeverity.MEDIUM),
+        (36, 65, "36-65", IssueSeverity.MEDIUM, IssueSeverity.LOW),
+        (66, 90, "66-90", IssueSeverity.LOW, IssueSeverity.LOW),
+        (91, 99, "91-99", IssueSeverity.LOW, IssueSeverity.LOW),
+    )
+    DMARC_FALLBACK_POLICY = {'quarantine': 'none', 'reject': 'quarantine'}
+
     @classmethod
-    def create_dmarc_not_100_pct(cls, pct: int) -> Issue:
-        """Partial DMARC coverage"""
+    def create_dmarc_not_100_pct(cls, pct: int, policy: str = None) -> Issue:
+        """Partial DMARC coverage (pct < 100), severity from :attr:`DMARC_PCT_SEVERITY`."""
+        row = next((r for r in cls.DMARC_PCT_SEVERITY if r[0] <= pct <= r[1]), None)
+        fallback = cls.DMARC_FALLBACK_POLICY.get(policy)
+        if row and fallback:
+            severity = row[3] if policy == 'quarantine' else row[4]
+            detail = (f"The DMARC 'pct' value is '{pct}': receivers implementing RFC 7489 apply "
+                      f"p={policy} to {pct}% of the messages failing DMARC and the next less strict "
+                      f"policy, p={fallback}, to the other {100 - pct}% (range {row[2]}). "
+                      f"RFC 9989 removed pct: its receivers apply the full policy.")
+        else:   # p=none (or unknown): pct changes nothing
+            severity = IssueSeverity.LOW
+            detail = (f"The DMARC 'pct' value is '{pct}', meaning the DMARC policy will only be "
+                      f"applied to {pct}% of incoming mail.")
+        data = {'percentage': pct, 'escape_rate': 100 - pct}
+        if row:
+            data['pct_range'] = row[2]
+        if fallback:
+            data['policy'] = policy
+            data['fallback_policy'] = fallback
         return Issue(
             code=cls.DMARC_NOT_100_PCT,
             title="Partial DMARC coverage",
-            detail=f"The DMARC 'pct' value is '{pct}', meaning the DMARC policy will only be applied to {pct}% of incoming mail.",
+            detail=detail,
             category=IssueCategory.DMARC,
-            severity=IssueSeverity.MEDIUM,
-            additional_data={'percentage': pct}
+            severity=severity,
+            additional_data=data,
+        )
+
+    @classmethod
+    def create_dmarc_testing_mode(cls, policy: str) -> Issue:
+        """DMARC policy published in test mode (RFC 9989 t=y)"""
+        return Issue(
+            code=cls.DMARC_TESTING_MODE,
+            title="DMARC policy in test mode",
+            detail=(
+                f"The DMARC record sets 't=y' (RFC 9989 test mode): receivers are asked not to "
+                f"apply the published policy 'p={policy}' and to use their own handling instead. "
+                f"In practice the policy is applied one level lower (reject -> quarantine, "
+                f"quarantine -> none), as with the legacy 'pct=0'."
+            ),
+            category=IssueCategory.DMARC,
+            # reject -> quarantine in practice (MEDIUM); quarantine -> none (HIGH, like p=none)
+            severity=IssueSeverity.MEDIUM if policy == 'reject' else IssueSeverity.HIGH,
+            additional_data={'policy': policy, 't': 'y'}
         )
 
     @classmethod
@@ -494,6 +550,65 @@ class IssueDefinitions:
             category=IssueCategory.DKIM,
             severity=IssueSeverity.LOW,
             additional_data={'selector': selector, 'key_size': key_size}
+        )
+
+    @classmethod
+    def create_dkim_rsa_known_factorization(cls, selector: str, key_size: int, source: str,
+                                            factor_digits: list = None, factordb: dict = None) -> Issue:
+        """DKIM RSA modulus whose private key anyone can compute.
+
+        *source*: ``factordb`` (factorization published on factordb.com),
+        ``small_factor`` (factor < 2^16 found by trial division) or ``prime_modulus``
+        (the modulus is prime).
+        """
+        how = {
+            'factordb': "its factorization is published on factordb.com (factor verified locally: n mod p = 0)",
+            'small_factor': "it has a small prime factor (found by trial division)",
+            'prime_modulus': "the modulus is prime, so phi(n) = n - 1 is public",
+        }.get(source, source)
+        data = {'selector': selector, 'key_size': key_size, 'source': source}
+        if factor_digits:
+            data['factor_digits'] = factor_digits
+        if factordb:
+            data['factordb'] = factordb
+        notes = ' '.join((factordb or {}).get('notes') or [])
+        return Issue(
+            code=cls.DKIM_RSA_KNOWN_FACTORIZATION,
+            title="DKIM RSA private key is recoverable",
+            detail=(f"The {key_size}-bit RSA key of DKIM selector '{selector}' is broken: {how}. "
+                    f"Anyone can rebuild the private key and sign mail as this domain with a valid, "
+                    f"aligned DKIM signature (DMARC passes even at p=reject). Revoke the selector "
+                    f"(empty p=) and publish a freshly generated 2048-bit key."
+                    + (f" factordb: {notes}" if notes else "")),
+            category=IssueCategory.DKIM,
+            severity=IssueSeverity.CRITICAL,
+            additional_data=data,
+        )
+
+    @classmethod
+    def create_dkim_rsa_exponent_issue(cls, selector: str, exponent: int, rating: str, reason: str) -> Issue:
+        """Non-standard DKIM RSA public exponent (rating from rsa_key_checks.rate_exponent).
+
+        ``dangerous`` (e=1: critical, e=3: high) -> dkim_rsa_dangerous_exponent;
+        ``invalid`` (medium), ``legacy`` / ``non_standard`` (low) -> dkim_rsa_nonstandard_exponent.
+        """
+        if rating == 'dangerous':
+            code = cls.DKIM_RSA_DANGEROUS_EXPONENT
+            severity = IssueSeverity.CRITICAL if exponent == 1 else IssueSeverity.HIGH
+            title = "Dangerous DKIM RSA public exponent"
+        else:
+            code = cls.DKIM_RSA_NONSTANDARD_EXPONENT
+            severity = IssueSeverity.MEDIUM if rating == 'invalid' else IssueSeverity.LOW
+            title = "Invalid DKIM RSA public exponent" if rating == 'invalid' else "Non-standard DKIM RSA public exponent"
+        shown = exponent if exponent.bit_length() <= 64 else f"<{exponent.bit_length()}-bit value>"
+        return Issue(
+            code=code,
+            title=title,
+            detail=f"DKIM selector '{selector}' uses the RSA public exponent e={shown} ({rating}). {reason}. "
+                   f"Use e=65537.",
+            category=IssueCategory.DKIM,
+            severity=severity,
+            additional_data={'selector': selector, 'exponent': str(exponent), 'rating': rating},
         )
 
     @classmethod

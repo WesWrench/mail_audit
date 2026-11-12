@@ -240,10 +240,10 @@ class SPFChecker:
                 parked=False,
                 ignore_too_many_lookups=True,
                 resolver=self._checkdmarc_resolver,  # None → checkdmarc creates its own
-                # timeout/timeout_retries are ignored when resolver= is supplied;
+                # timeout/retries are ignored when resolver= is supplied;
                 # kept here as fallback for when resolver=None (legacy path).
                 timeout=self.dns_utils.resolver.timeout,
-                timeout_retries=self.dns_utils.max_retries,
+                retries=self.dns_utils.max_retries,
             )
 
             # Delegate to check_spf_tree()

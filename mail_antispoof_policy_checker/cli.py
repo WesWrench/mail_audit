@@ -34,6 +34,7 @@ from lib.data.loaders import DataLoaders
 from lib.utils.maxmind_client import MaxMindClient, InvalidLicenseKeyError
 from lib.utils.email_domain_checker import EmailDomainChecker
 from lib.utils.async_dns_resolver import AsyncPooledDNSResolver
+from lib.utils.factordb import FactorDBClient
 
 
 def convert_json_report_to_excel(json_path: str, excel_path: str = None) -> str:
@@ -651,6 +652,7 @@ def run_check_record_mode(args):
             cname_check=not args.skip_cname_check,
             cname_max_depth=args.cname_max_depth,
             wildcard_probes=args.cname_wildcard_probes,
+            factordb=None if args.skip_factordb_check else FactorDBClient(),
         )
 
     if not args.skip_cname_check:
@@ -1488,6 +1490,12 @@ Examples:
         default=None,
         help='Custom DKIM selector list (one selector per line, "#" comments allowed). '
              'Replaces the bundled list. Default: <data-dir>/DKIM_Selectors.txt'
+    )
+    parser.add_argument(
+        '--skip-factordb-check',
+        action='store_true',
+        help='Do not look DKIM RSA moduli up on factordb.com (known factorizations). '
+             'The offline key checks (exponent, small factor, prime modulus) still run (default: False)'
     )
     parser.add_argument(
         '--skip-cname-check',

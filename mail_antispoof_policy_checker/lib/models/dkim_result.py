@@ -16,6 +16,8 @@ class DKIMSelectorInfo:
     public_key: Optional[str] = None
     key_type: Optional[str] = None
     record: Optional[str] = None  # raw DKIM TXT record
+    rsa_exponent: Optional[int] = None  # RSA public exponent e (RSA keys only)
+    factordb: Optional[Dict[str, Any]] = None  # factordb.com lookup of the modulus (status, url)
     issues: List[Issue] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -32,6 +34,10 @@ class DKIMSelectorInfo:
                 'key_type': self.key_type,
                 'issues': [issue.to_dict() for issue in self.issues]
             })
+            if self.rsa_exponent is not None:
+                result['rsa_exponent'] = str(self.rsa_exponent)
+            if self.factordb is not None:
+                result['factordb'] = self.factordb
 
         return result
 

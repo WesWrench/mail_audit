@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>factordb · 1522605027…39&lt;100&gt;</title>
+<style>*{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<script>try{var t=localStorage.getItem('fdb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/app.css?v=1794179212">
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap row">
+    <a class="brand" href="/" style="text-decoration:none;color:inherit">factordb<span class="dot"></span></a>
+    <nav class="nav">
+      <a href="/" aria-current="page">Search</a>
+      <a href="/sequences.php">Sequences</a>
+      <a href="/listtype.php">Lists</a>
+      <a href="/tables.php">Tables</a>
+      <a href="/download.php">Download</a>
+      <a href="/api.php">API</a>
+      <a href="/ecm.php">ECM</a>
+      <a href="/snfsside.php">SNFS</a>
+      <a href="/status.php">Status</a>
+      <a href="/report.php">Report</a>
+      <a href="/limits.php">Limits</a>
+            <a href="/?config">Settings</a>
+    </nav>
+    <div class="spacer"></div>
+              <a class="acct" href="/login.php?next=%2Findex.php%3Fquery%3D1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139">Sign in</a>
+        <button class="toggle" id="themeBtn" type="button" aria-label="Toggle color theme">
+      <span id="themeIcon">◐</span><span id="themeLabel">Theme</span>
+    </button>
+  </div>
+</div>
+<main class="wrap">
+
+<form class="search" method="get" action="/" style="margin-top:8px">
+  <select id="searchKind" class="control kind" aria-label="Interpret the input as">
+    <option value="query" selected>Number / expression</option>
+    <option value="id">Database id</option>
+    <option value="npnext">Next prime above</option>
+    <option value="npprev">Previous prime below</option>
+  </select>
+  <div class="input">
+    <span class="glyph">&gt;</span>
+    <input id="q" name="query" type="text"
+           value="1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139" autocomplete="off" spellcheck="false">
+  </div>
+  <button class="btn btn-primary" type="submit">Factor</button>
+  <a class="btn btn-ghost" href="/syntax.php" title="Expression syntax &amp; functions" aria-label="Expression syntax help"
+     style="padding:9px 13px;font-weight:600">?</a>
+</form>
+<p class="hint">Enter a value, an expression, or a term with a variable like <code>10^n+1</code> to list a range.
+   Switch to <b>Database id</b> to look a number up by its stored id.
+   Reading never stores anything; use <b>Create</b> to add a number to the database.
+   See the <a class="link" href="/syntax.php">expression syntax &amp; functions</a> reference.</p>
+
+
+    <article class="card record" style="margin-top:20px">
+      <div class="head">
+        <span class="badge b-FF"><span class="tick t-FF"></span>FF · Fully factored</span>        <div class="metas">
+                      <span class="meta" id="recIdMeta">id&nbsp;<b>#1100000000020360822</b></span>
+                    <span class="meta"><b>100</b>&nbsp;digits</span>
+                      <span class="meta" title="Stored before the creation-day records begin">created&nbsp;<b>before Nov 2018</b></span>
+                                      </div>
+      </div>
+      <div class="body">
+                  <div class="notice" style="margin:0 0 14px;background:var(--st-p-bg,#eef6ff);border-color:transparent">
+            <span class="mk" style="color:var(--st-p,#2563eb)">★</span>
+            <div><b>Interesting number.</b> First RSA Challenge number to fall: Manasse and Lenstra, April 1, 1991, about 7 MIPS-years of MPQS; now a standard benchmark that takes minutes on modern hardware.</div>
+          </div>
+                        <p class="fieldlabel">Value</p>
+                <div class="value" style="white-space:normal">1522605027…39<sub class="dig">&lt;100&gt;</sub></div>
+                
+                  <div class="facline">
+            <a class="factor" href="/?id=1100000000020360824" style="text-decoration:none;color:inherit"><span class="tick t-P"></span><span class="fbase">37975227936943673922808872755445627854565536638199<sub class="dig">&lt;50&gt;</sub></span></a><span class="times">×</span><a class="factor" href="/?id=1100000000020360823" style="text-decoration:none;color:inherit"><span class="tick t-P"></span><span class="fbase">40094690950920881030683735292761468389214899724061<sub class="dig">&lt;50&gt;</sub></span></a>                                  </div>
+                  
+        <div class="actions">
+                                <a class="btn btn-ghost" href="?query=1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139&amp;full=1">Show full digits</a>
+                                <a class="btn btn-quiet" href="?id=1100000000020360822">Permalink</a>
+                                <form method="post" action="?query=1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139" style="display:contents">
+              <button class="btn btn-quiet" type="submit" name="np" value="prev" title="Largest prime below this number">&lsaquo; prev prime</button>
+              <button class="btn btn-quiet" type="submit" name="np" value="next" title="Smallest prime above this number">next prime &rsaquo;</button>
+            </form>
+                  </div>
+      </div>
+    </article>
+
+    
+    
+          <details class="card pad" id="factorOfCard" style="margin-top:16px">
+        <summary style="cursor:pointer"><span class="fieldlabel" style="display:inline;margin:0">Is factor of</span></summary>
+        <div id="factorOf" data-id="1100000000020360822" data-qs="" data-loaded="0" style="margin-top:10px"></div>
+      </details>
+    
+    
+    
+    
+    
+              <details class="algfac" id="ecmbox">
+        <summary>
+          <span class="algtitle">ECM</span>
+          <span class="algcount">2 factors of 25-100 digits · 0 with a recorded find</span>
+        </summary>
+        <div class="algbody">
+          <p class="alghint">How the prime factors of 25 to 100 digits were found. A report is checked before it is recorded: the group order of the curve (p-1 or p+1 for P-1 / P+1) must be smooth within B1 and B2.</p>
+                                        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
+            <div class="algrow">
+              <span class="algterm"><a class="link" href="/?id=1100000000020360824">37975227936943673922808872755445627854565536638199<sub class="dig">&lt;50&gt;</sub></a></span>
+              <span class="algdig">50 dig</span>
+            </div>
+                        <form method="post" action="?query=1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139&amp;do=reportecm&amp;open=ecm#ecmbox" style="margin-top:6px">
+              <input type="hidden" name="ecmfac" value="1100000000020360824">
+              <p class="hint" style="margin:0 0 6px">No find recorded - how was this factor found?</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+                <select name="method" class="control" style="width:auto">
+                  <option value="ecm1">ECM, GMP-ECM param 1 (its default)</option><option value="ecm0">ECM, param 0 (Suyama, Montgomery curve)</option><option value="ecm2">ECM, param 2</option><option value="ecm3">ECM, param 3</option><option value="edwards">ECM, Edwards curve</option><option value="pm1">Pollard P-1</option><option value="pp1">Williams P+1</option>                </select>
+                <input name="b1" class="control" style="width:140px" inputmode="numeric" placeholder="B1" required>
+                <input name="b2" class="control" style="width:160px" inputmode="numeric" placeholder="B2 (optional)">
+                <input name="sigma" class="control" style="width:180px" placeholder="sigma (ECM, e.g. 1:2938471)">
+                <button type="submit" class="btn">Report</button>
+              </div>
+            </form>
+                      </div>
+                    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)">
+            <div class="algrow">
+              <span class="algterm"><a class="link" href="/?id=1100000000020360823">40094690950920881030683735292761468389214899724061<sub class="dig">&lt;50&gt;</sub></a></span>
+              <span class="algdig">50 dig</span>
+            </div>
+                        <form method="post" action="?query=1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139&amp;do=reportecm&amp;open=ecm#ecmbox" style="margin-top:6px">
+              <input type="hidden" name="ecmfac" value="1100000000020360823">
+              <p class="hint" style="margin:0 0 6px">No find recorded - how was this factor found?</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+                <select name="method" class="control" style="width:auto">
+                  <option value="ecm1">ECM, GMP-ECM param 1 (its default)</option><option value="ecm0">ECM, param 0 (Suyama, Montgomery curve)</option><option value="ecm2">ECM, param 2</option><option value="ecm3">ECM, param 3</option><option value="edwards">ECM, Edwards curve</option><option value="pm1">Pollard P-1</option><option value="pp1">Williams P+1</option>                </select>
+                <input name="b1" class="control" style="width:140px" inputmode="numeric" placeholder="B1" required>
+                <input name="b2" class="control" style="width:160px" inputmode="numeric" placeholder="B2 (optional)">
+                <input name="sigma" class="control" style="width:180px" placeholder="sigma (ECM, e.g. 1:2938471)">
+                <button type="submit" class="btn">Report</button>
+              </div>
+            </form>
+                      </div>
+                  </div>
+      </details>
+    
+        <details class="clibox"><summary><span class="clititle">From the command line</span><span class="clitag">fdb · curl</span></summary><div class="clibody"><div class="clirow"><a class="clilbl" href="https://github.com/mtvb/factordb-cli" rel="noopener" title="fdb - the factordb command-line client (GitHub)">fdb</a><pre class="clicmd">fdb number &#039;1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139&#039; --detail 2</pre></div><div class="clirow"><span class="clilbl">curl</span><pre class="clicmd">curl -s &#039;https://factordb.com:4059/rpc&#039; -H &#039;Content-Type: application/json&#039; -d &#039;{&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;get_number&quot;,&quot;params&quot;:{&quot;target&quot;:{&quot;expr&quot;:&quot;1522605027922533360535618378132637429718068114961380688657908494580122963258952897654000350692006139&quot;},&quot;decimal&quot;:false,&quot;detail&quot;:2}}&#039;</pre></div></div></details></main>
+<footer class="wrap" style="margin-top:28px;border-top:1px solid var(--hair);padding-top:12px;padding-bottom:22px;color:var(--muted);font-size:12px;text-align:center">
+  This page made <b>2</b> RPC calls  (<b>2</b> queries included).
+    <div style="margin-top:12px">
+    &copy; 2026 Markus Tervooren
+    &middot; <a class="link" href="/impressum.php">Impressum</a>
+    &middot; <a class="link" href="/datenschutz.php">Datenschutz</a>
+    &middot; <a class="link" href="/credits.php">Credits</a>
+  </div>
+</footer>
+<script src="/assets/app.js?v=1794306203"></script>
+</body>
+</html>

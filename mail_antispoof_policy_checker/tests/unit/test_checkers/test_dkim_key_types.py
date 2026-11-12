@@ -17,7 +17,11 @@ def _spki(key):
 
 _ED = ed25519.Ed25519PrivateKey.generate().public_key()
 _ED_RAW = base64.b64encode(_ED.public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)).decode()
-_RSA_512 = rsa.RSAPublicNumbers(65537, (1 << 511) | 1).public_key()
+# 512-bit semiprime: secp256k1 field prime x P-256 field prime (no small factor, not prime;
+# cryptography cannot generate keys under 1024 bits)
+_SECP256K1_P = 2**256 - 2**32 - 977
+_P256_P = 2**256 - 2**224 + 2**192 + 2**96 - 1
+_RSA_512 = rsa.RSAPublicNumbers(65537, _SECP256K1_P * _P256_P).public_key()
 _RSA_1024 = rsa.generate_private_key(65537, 1024).public_key()
 _RSA_2048 = rsa.generate_private_key(65537, 2048).public_key()
 _P256 = ec.generate_private_key(ec.SECP256R1()).public_key()

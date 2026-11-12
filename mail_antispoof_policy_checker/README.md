@@ -626,25 +626,30 @@ class DMARCResult:
     policy: str                          # Policy p= (none/quarantine/reject)
     subdomain_policy: str                # Subdomain policy sp= (defaults to p)
     np_policy: str                       # RFC 9091 np= non-existent-subdomain policy
-    percentage: int                      # Percentage of messages to filter
+    testing: bool                        # RFC 9989 t=y (policy in test mode)
+    psd: str                             # RFC 9989 psd= flag (y/n/u)
+    percentage: int                      # RFC 7489 pct= (removed in RFC 9989)
     aggregate_report_uris: List[str]     # RUA addresses
     forensic_report_uris: List[str]      # RUF addresses
     issues: List[Issue]                  # List of detected issues
     parsed_dmarc: Dict                   # Parsed DMARC (if store_parsed=True)
 ```
 
-#### Robust parsing — `np=` (RFC 9091) and unknown tags
+#### DMARCbis (RFC 9989) and `np=` (RFC 9091)
 
-`checkdmarc` (through 5.12.27) rejects the RFC 9091 **`np=`** tag (non-existent-subdomain
-policy) with `InvalidDMARCTag`. The checker no longer lets that void the record: when the
-refused tag is a **recognised** DMARC tag, it strips the tag, re-parses the remainder with
-`checkdmarc` (keeping its full validation), and re-applies the stripped tag's value natively.
-A genuinely unknown/garbage tag still populates the core fields (via a hardened native parser)
-and is reported as an issue. The native parser follows RFC 7489 §6.3 — case-insensitive tag
-names, lower-cased enum values, **unknown tags ignored**, `sp` defaults to `p`, `np` defaults
-to the effective `sp`. So `v=DMARC1; p=reject; sp=quarantine; np=none; aspf=r` now yields
-`policy=reject`, `subdomain_policy=quarantine`, `np_policy=none`, `alignment_spf=r`
-(previously everything came back `None`).
+Parsing and validation come from `checkdmarc>=6`, which implements RFC 9989: `np`, `psd` and
+`t` are understood, unknown tags are ignored (with a warning), and implicit tags are filled
+with their defaults (`sp` = `p`, `np` = an explicit `sp` else `p`, `adkim` = `aspf` = `r`).
+So `v=DMARC1; p=reject; sp=quarantine; np=none; aspf=r` yields `policy=reject`,
+`subdomain_policy=quarantine`, `np_policy=none`, `alignment_spf=r`.
+
+- **`t=y` (test mode)**: `testing=True` and a `dmarc_testing_mode` issue (medium on
+  `p=reject`, high on `p=quarantine`). `mail_audit` applies the policy one level lower.
+- **`pct`**: removed by RFC 9989 (checkdmarc drops it), but still applied by RFC 7489
+  receivers, so it is read from the raw record and `pct` < 100 raises
+  `dmarc_partial_coverage`.
+- **`sp`**: `dmarc_lax_subdomain_policy` is only raised for a published `sp=` (an implicit
+  `sp` equals `p`, already reported).
 
 **Subdomain inheritance (RFC 9091).** When a subdomain has no own `_dmarc`, the policy it
 inherits from the organizational domain depends on whether the subdomain **exists**: an
@@ -710,8 +715,11 @@ dkim_checker = DKIMChecker(
     cname_check=True,                # CNAME chain check at selector names (default: True)
     cname_max_depth=10,              # Max CNAME links followed
     wildcard_probes=3,               # Random sibling probes per selector parent (min 3)
+    factordb=FactorDBClient(),       # factordb.com lookup of RSA moduli (default None: no lookup)
 )
 ```
+
+`FactorDBClient` comes from `lib.utils.factordb`. See *RSA key checks* below.
 
 **Selector file format** — one selector per line; blank lines and lines starting
 with `#` are ignored; duplicates are removed (order kept). Multi-label selectors
@@ -909,14 +917,15 @@ This section lists all security issues that can be detected by the Mail AntiSpoo
 > **Unregistered Domains in SPF** (`spf_domain_unregistered`,
 > `spf_domain_potentially_unregistered`) — unchanged and not duplicated.
 
-### DMARC Issues (12 types)
+### DMARC Issues (13 types)
 
 | Title | Severity | Description | When Detected |
 |-------|----------|-------------|---------------|
 | No DMARC Record | High | No DMARC record found for this domain | DNS query for `_dmarc.domain` returns no TXT record starting with `v=DMARC1` |
 | Lax DMARC Policy | Medium | DMARC policy is set to 'none' (not enforced) | `p=none` (emails failing DMARC are delivered anyway) |
 | Lax DMARC Subdomain Policy | Medium | DMARC subdomain policy is set to 'none' (allows subdomain spoofing) | `sp=none` or `sp=` absent with `p=none` (subdomains inherit weak policy) |
-| DMARC Percentage Not 100% | Low | DMARC is not applied to 100% of messages | `pct=` value is less than 100 (partial enforcement) |
+| Partial DMARC coverage (`dmarc_partial_coverage`) | Low → High (by `pct` range, see below) | DMARC is not applied to 100% of messages | `pct=` value is less than 100 (partial enforcement) |
+| DMARC policy in test mode (`dmarc_testing_mode`) | Medium (`p=reject`) / High (`p=quarantine`) | `t=y` (RFC 9989): the policy is applied one level lower | `t=y` with `p=quarantine` or `p=reject` |
 | DNS Timeout | Medium | DNS query timed out | DNS server didn't respond within timeout period |
 | DMARC Syntax Error | High | DMARC record has invalid syntax | checkdmarc parser raises DMARCSyntaxError (e.g., malformed tags, invalid format) |
 | Invalid DMARC Tag | Medium | DMARC record contains an unrecognized tag | checkdmarc raises InvalidDMARCTag (tag not in DMARC specification) |
@@ -926,13 +935,37 @@ This section lists all security issues that can be detected by the Mail AntiSpoo
 | _dmarc CNAME points to an unregistered domain (`dmarc_cname_target_unregistered`) | Critical | Registrable domain of the broken target appears unregistered | Whoever registers it controls the DMARC policy (e.g. `p=none`) |
 | _dmarc CNAME points to a potentially unregistered domain (`dmarc_cname_target_potentially_unregistered`) | High | No NS, registration not confirmed | Availability pipeline returns *unknown* |
 
-### DKIM Issues (7 types)
+**`pct` (RFC 7489 §6.6.4) — severity by range.** A receiver implementing RFC 7489 applies
+the policy to `pct`% of the messages failing DMARC and the **next less strict policy** to the
+other `(100 - pct)`%: `p=quarantine` → `none` (delivered), `p=reject` → `quarantine` (spam).
+The severity of `dmarc_partial_coverage` therefore depends on the range **and** on the policy
+(`IssueDefinitions.DMARC_PCT_SEVERITY`, same ranges as the `likelihood_by_pct` table of
+`mail_audit`):
+
+| `pct` | Share of spoofs escaping `p=` | `p=quarantine` (escapes get `none`) | `p=reject` (escapes get `quarantine`) |
+|---|---|---|---|
+| 0 | 100 % (whole policy one level lower, like `t=y`) | High | Medium |
+| 1 – 10 | 90 – 99 % | High | Medium |
+| 11 – 35 | 65 – 89 % | High | Medium |
+| 36 – 65 | 35 – 64 % | Medium | Low |
+| 66 – 90 | 10 – 34 % | Low | Low |
+| 91 – 99 | 1 – 9 % | Low | Low |
+| any, with `p=none` | — | Low (nothing is enforced anyway) | — |
+
+`additional_data` carries `percentage`, `escape_rate`, `pct_range`, `policy` and
+`fallback_policy`. RFC 9989 (DMARCbis) removed `pct`: receivers implementing it ignore the
+tag and apply the full policy; `pct` is still read because RFC 7489 receivers apply it.
+
+### DKIM Issues (10 types)
 
 | Title | Severity | Description | When Detected |
 |-------|----------|-------------|---------------|
 | No DKIM selectors found (`dkim_no_selectors`) | Medium | None of the tested selectors has a TXT record | Enumeration of the selector list finds nothing |
 | Weak DKIM RSA Key Size (`dkim_rsa_weak_key`) | High | RSA key of less than 1024 bits (weak cryptography) | `k=rsa` or no `k=` tag, and RSA key size < 1024 bits (factorable, e.g. 512-bit) |
 | Perfectible DKIM RSA Key Size (`dkim_rsa_perfectible_key`) | Low | RSA key of exactly 1024 bits | `k=rsa` or no `k=` tag. RFC 8301 minimum, not practically factorable today, but 2048 bits is recommended — plan a rotation |
+| DKIM RSA private key is recoverable (`dkim_rsa_known_factorization`) | Critical | Anyone can compute the private key | A factor of the modulus is known: published on factordb.com (verified locally), small prime factor (< 2^16), or prime modulus. See *RSA key checks* below |
+| Dangerous DKIM RSA public exponent (`dkim_rsa_dangerous_exponent`) | Critical (`e=1`) / High (`e=3`) | Signature forgery without the private key on lenient verifiers | `e=1` or `e=3` |
+| Non-standard / invalid DKIM RSA public exponent (`dkim_rsa_nonstandard_exponent`) | Low (legacy, too large) / Medium (invalid) | Exponent other than 65537 | `3 < e < 65537` (e.g. 17), `e >= 2^256`, or an invalid `e` (even, `< 3`) |
 | DKIM Syntax Error (`dkim_syntax_error`) | Medium | DKIM record or key is invalid | Unknown `k=` value, invalid base64, `p=` not matching `k=` (see below); in `check_record` mode also missing `v=DKIM1` or missing `p=` tag |
 | DNS Timeout (`dkim_dns_timeout`) | High | DNS timeout on an email domain | Timeout while querying the domain |
 | DKIM selector CNAME points to an unregistered domain (`dkim_cname_target_unregistered`) | Critical | Registrable domain of the broken target appears unregistered | Whoever registers it can publish a key and sign mail **as the audited domain** (DKIM-aligned → DMARC pass) |
@@ -951,6 +984,60 @@ against it. The 1024-bit thresholds apply to RSA keys only:
 | `rsa` or absent | Ed25519 or EC key, invalid key | `dkim_syntax_error` |
 | any other value | any | `dkim_syntax_error` (unsupported key type) |
 | any | empty (revoked key) | no issue |
+
+#### RSA key checks: public exponent and recoverable private key
+
+For every RSA key (`k=rsa` or no `k=`), `n` and `e` are read from the DER
+SubjectPublicKeyInfo (`lib/utils/rsa_key_checks.py`, which also reads keys that
+`cryptography` refuses to load, e.g. `e=1`), then:
+
+**1. Public exponent `e`** (`rate_exponent`):
+
+| `e` | Rating | Issue | Why |
+|---|---|---|---|
+| 65537 (up to 2^256) | standard | — | RFC 8017 / NIST SP 800-56B range; 65537 is the norm |
+| 1 | dangerous | `dkim_rsa_dangerous_exponent` (Critical) | `s^1 = s`: the padded hash is its own signature, no private key needed |
+| 3 | dangerous | `dkim_rsa_dangerous_exponent` (High) | Cube-root forgery (Bleichenbacher 2006) on verifiers that check the PKCS#1 v1.5 padding loosely |
+| 5 … 65535 (e.g. 17) | legacy | `dkim_rsa_nonstandard_exponent` (Low) | No practical attack with correct padding, but outdated, below the NIST minimum |
+| even, or < 3 (other than 1) | invalid | `dkim_rsa_nonstandard_exponent` (Medium) | No private exponent exists: nothing verifies, mail signed with the selector fails DKIM |
+| ≥ 2^256 | non_standard | `dkim_rsa_nonstandard_exponent` (Low) | Above the NIST maximum; some verifiers refuse it |
+
+**2. Can anyone compute the private key?** One `dkim_rsa_known_factorization` (Critical)
+at most, with `additional_data.source`:
+
+| Check | Where | `source` |
+|---|---|---|
+| Trial division by every prime < 2^16 | offline | `small_factor` |
+| Miller-Rabin primality test (a prime modulus makes `φ(n) = n - 1` public) | offline | `prime_modulus` |
+| Lookup on [factordb.com](https://factordb.com) | network | `factordb` |
+
+**factordb lookup** (`lib/utils/factordb.py`, `FactorDBClient`):
+
+- Reads the search page `https://factordb.com/index.php?query=<n in decimal>`, not the
+  throttled JSON API. Reading a number does not store it on factordb ("Reading never stores
+  anything"), so an audit does not add the audited keys to the database.
+- factordb status (badge on the page): `FF` fully factored, `CF` a factor known, `C` no
+  factor known, `P`/`PRP` prime, `U` unknown. With `FF`/`CF` each listed factor is read
+  (abbreviated long factors are fetched from their own page, `?id=<id>&full=1`) and
+  **verified locally** (`1 < p < n` and `n mod p = 0`) before an issue is raised: a change of
+  the site's HTML can cause a miss, never a false finding.
+- Follows https://factordb.com/limits.php: its own User-Agent, one request at a time, 0.5 s
+  between requests, in-memory cache per modulus (a key shared by many domains is queried once),
+  and no further request in the run after an HTTP 429. Network errors are reported in the
+  selector's `factordb` field (`status: "error"`), never as an issue.
+- **Information box.** factordb annotates well-known numbers ("*Interesting number.* 768-bit
+  Oakley Group 1 (RFC 2409, 1998)…", "*…the second most common 512-bit export DH prime…
+  Logjam…*", RSA challenge numbers…). The text is kept in `notes`: it tells where a key
+  comes from (a copied example, a published prime). It is added to the issue detail and to
+  the *factordb Note* column of the `mail_audit` Excel export.
+- factordb is queried for every RSA key when enabled, **even after an offline finding**
+  (small factor, prime modulus), so that the note is available; the offline source is kept
+  as the issue `source`.
+- Each RSA selector gets a `factordb` field in the JSON output: `status`, `url` (link to
+  the factordb page), `notes` when factordb has some, and `factor_digits` when a factor is
+  known. The factors themselves are not written to the report.
+- Disable it with `--skip-factordb-check` (CLI) or `DKIMChecker(factordb=None)` (the
+  default for the library). The offline checks always run.
 
 ### CNAME Chain Checks
 
@@ -1380,6 +1467,11 @@ detect wildcards (default and minimum: 3).
 Skip the registration check (DomainAvailabilityChecker: NS → RDAP/WHOIS → registrar)
 on SPF include domains **and** on the registrable domains of broken CNAME targets.
 Those CNAME targets then stay `registration.state = not_verified`.
+
+#### --skip-factordb-check
+
+Do not look DKIM RSA moduli up on factordb.com (known factorizations). The offline key
+checks (exponent, small factor, prime modulus) still run. See *RSA key checks*.
 
 ---
 

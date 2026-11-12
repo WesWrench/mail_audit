@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>factordb · 1114197361…&lt;155&gt;</title>
+<style>*{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<script>try{var t=localStorage.getItem('fdb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/app.css?v=1794179212">
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap row">
+    <a class="brand" href="/" style="text-decoration:none;color:inherit">factordb<span class="dot"></span></a>
+    <nav class="nav">
+      <a href="/" aria-current="page">Search</a>
+      <a href="/sequences.php">Sequences</a>
+      <a href="/listtype.php">Lists</a>
+      <a href="/tables.php">Tables</a>
+      <a href="/download.php">Download</a>
+      <a href="/api.php">API</a>
+      <a href="/ecm.php">ECM</a>
+      <a href="/snfsside.php">SNFS</a>
+      <a href="/status.php">Status</a>
+      <a href="/report.php">Report</a>
+      <a href="/limits.php">Limits</a>
+            <a href="/?config">Settings</a>
+    </nav>
+    <div class="spacer"></div>
+              <a class="acct" href="/login.php?next=%2Findex.php%3Fquery%3D11141973616799305182672125953821539621789863864652082189484418383755797726500394212227314338509410225240621127512913527972129628050063918116985983184044619">Sign in</a>
+        <button class="toggle" id="themeBtn" type="button" aria-label="Toggle color theme">
+      <span id="themeIcon">◐</span><span id="themeLabel">Theme</span>
+    </button>
+  </div>
+</div>
+<main class="wrap">
+
+<form class="search" method="get" action="/" style="margin-top:8px">
+  <select id="searchKind" class="control kind" aria-label="Interpret the input as">
+    <option value="query" selected>Number / expression</option>
+    <option value="id">Database id</option>
+    <option value="npnext">Next prime above</option>
+    <option value="npprev">Previous prime below</option>
+  </select>
+  <div class="input">
+    <span class="glyph">&gt;</span>
+    <input id="q" name="query" type="text"
+           value="11141973616799305182672125953821539621789863864652082189484418383755797726500394212227314338509410225240621127512913527972129628050063918116985983184044619" autocomplete="off" spellcheck="false">
+  </div>
+  <button class="btn btn-primary" type="submit">Factor</button>
+  <a class="btn btn-ghost" href="/syntax.php" title="Expression syntax &amp; functions" aria-label="Expression syntax help"
+     style="padding:9px 13px;font-weight:600">?</a>
+</form>
+<p class="hint">Enter a value, an expression, or a term with a variable like <code>10^n+1</code> to list a range.
+   Switch to <b>Database id</b> to look a number up by its stored id.
+   Reading never stores anything; use <b>Create</b> to add a number to the database.
+   See the <a class="link" href="/syntax.php">expression syntax &amp; functions</a> reference.</p>
+
+
+    <article class="card record" style="margin-top:20px">
+      <div class="head">
+        <span class="badge b-P"><span class="tick t-P"></span>P · Proven prime</span>        <div class="metas">
+                      <span class="meta" id="recIdMeta">id&nbsp;<b>#1100000001531617260</b></span>
+                    <span class="meta"><b>155</b>&nbsp;digits</span>
+                      <span class="meta" title="Day this number was first stored (nearest creation-day record)">created&nbsp;<b>2020-06-21</b></span>
+                                      </div>
+      </div>
+      <div class="body">
+                  <div class="notice" style="margin:0 0 14px;background:var(--st-p-bg,#eef6ff);border-color:transparent">
+            <span class="mk" style="color:var(--st-p,#2563eb)">★</span>
+            <div><b>Interesting number.</b> The second most common 512-bit export DH prime (old mod_ssl, 10% of servers), also precomputed with CADO-NFS by the 2015 Logjam team to break TLS downgrades on demand.</div>
+          </div>
+                        <p class="fieldlabel">Value</p>
+                <div class="value" style="white-space:normal">1114197361…19<sub class="dig">&lt;155&gt;</sub></div>
+                
+        
+        <div class="actions">
+                                <a class="btn btn-ghost" href="?query=11141973616799305182672125953821539621789863864652082189484418383755797726500394212227314338509410225240621127512913527972129628050063918116985983184044619&amp;full=1">Show full digits</a>
+                                <a class="btn btn-quiet" href="?id=1100000001531617260">Permalink</a>
+                                <form method="post" action="?query=11141973616799305182672125953821539621789863864652082189484418383755797726500394212227314338509410225240621127512913527972129628050063918116985983184044619" style="display:contents">
+              <button class="btn btn-quiet" type="submit" name="np" value="prev" title="Largest prime below this number">&lsaquo; prev prime</button>
+              <button class="btn btn-quiet" type="submit" name="np" value="next" title="Smallest prime above this number">next prime &rsaquo;</button>
+            </form>
+                  </div>
+      </div>
+    </article>
+
+    
+    
+          <details class="card pad" id="factorOfCard" style="margin-top:16px">
+        <summary style="cursor:pointer"><span class="fieldlabel" style="display:inline;margin:0">Is factor of</span></summary>
+        <div id="factorOf" data-id="1100000001531617260" data-qs="" data-loaded="0" style="margin-top:10px"></div>
+      </details>
+    
+          <div class="card pad" style="margin-top:16px">
+        <p class="fieldlabel">Primality</p>
+                  <div class="statrow"><span>Verified directly</span><b>proven prime</b></div>
+          <p class="hint" style="margin-top:8px;margin-bottom:0">Checked deterministically (below 300 digits).</p>
+                                            </div>
+    
+    
+    
+    
+        
+        <details class="clibox"><summary><span class="clititle">From the command line</span><span class="clitag">fdb · curl</span></summary><div class="clibody"><div class="clirow"><a class="clilbl" href="https://github.com/mtvb/factordb-cli" rel="noopener" title="fdb - the factordb command-line client (GitHub)">fdb</a><pre class="clicmd">fdb number &#039;11141973616799305182672125953821539621789863864652082189484418383755797726500394212227314338509410225240621127512913527972129628050063918116985983184044619&#039; --detail 2</pre></div><div class="clirow"><span class="clilbl">curl</span><pre class="clicmd">curl -s &#039;https://factordb.com:4059/rpc&#039; -H &#039;Content-Type: application/json&#039; -d &#039;{&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;get_number&quot;,&quot;params&quot;:{&quot;target&quot;:{&quot;expr&quot;:&quot;11141973616799305182672125953821539621789863864652082189484418383755797726500394212227314338509410225240621127512913527972129628050063918116985983184044619&quot;},&quot;decimal&quot;:false,&quot;detail&quot;:2}}&#039;</pre></div></div></details></main>
+<footer class="wrap" style="margin-top:28px;border-top:1px solid var(--hair);padding-top:12px;padding-bottom:22px;color:var(--muted);font-size:12px;text-align:center">
+  This page made <b>1</b> RPC call  (<b>1</b> query included).
+    <div style="margin-top:12px">
+    &copy; 2026 Markus Tervooren
+    &middot; <a class="link" href="/impressum.php">Impressum</a>
+    &middot; <a class="link" href="/datenschutz.php">Datenschutz</a>
+    &middot; <a class="link" href="/credits.php">Credits</a>
+  </div>
+</footer>
+<script src="/assets/app.js?v=1794306203"></script>
+</body>
+</html>
